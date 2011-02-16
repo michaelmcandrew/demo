@@ -1,0 +1,7 @@
+settings.php
+civicrm.settings.php
+*.sql
+*.mysql
+*.tar
+*.gz
+drupal/sites/default/files/*
