@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -153,6 +153,7 @@
 	//load jQuery data table.
         cj('#voterRecords').dataTable( {
 		"sPaginationType": "full_numbers",
+		"bJQueryUI"  : true,
 		"aaSorting"  : sortColumn,
 		"aoColumns"  : columns
         });        
@@ -214,7 +215,18 @@
 	for ( radioName in allRadios ) {
 	   if ( !data.hasOwnProperty( radioName ) ) data[radioName] = '';  
 	}
-		
+	
+	//carry contact related profile field data.
+	fieldName = 'field_' + voterId;
+	cj( '[id^="'+ fieldName +'"]' ).each( function( ) {
+	    fldId = cj(this).attr( 'id' );
+	    if ( fldId.indexOf( '_custom_' ) == -1 &&
+	         fldId.indexOf( '_result' ) == -1  && 
+		 fldId.indexOf( '_note' ) == -1  ) {
+	       data[fldId] = cj( this ).val( );
+	    }
+        });
+	
 	var surveyActivityIds = {/literal}{$surveyActivityIds}{literal};
 	activityId =  eval( "surveyActivityIds.activity_id_" + voterId );
 	if ( !activityId ) return; 	
@@ -226,9 +238,9 @@
 	data['result']           = cj( '#field_' + voterId + '_result' ).val( ); 
 	data['note']             = cj( '#field_' + voterId + '_note' ).val( );
 	data['surveyTitle']      = {/literal}'{$surveyValues.title|escape:javascript}'{literal};
-	data['ufGroupId']        = {/literal}'{$ufGroupId}'{literal};	
+	data['survey_id']        = {/literal}'{$surveyValues.id}'{literal};
 	
-	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=registerInterview' }"{literal}	          
+	var dataUrl = {/literal}"{crmURL p='civicrm/campaign/registerInterview' h=0}"{literal}	          
 	
 	//post data to create interview.
 	cj.post( dataUrl, data, function( interview ) {

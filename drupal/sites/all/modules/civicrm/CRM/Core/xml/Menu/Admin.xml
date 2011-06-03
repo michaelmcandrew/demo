@@ -246,6 +246,24 @@
      <weight>280</weight>
   </item>
   <item>
+     <path>civicrm/admin/pdfFormats</path>
+     <title>PDF Page Formats</title>
+     <desc>Configure PDF Page Formats that can be assigned to Message Templates when creating PDF letters.</desc>
+     <page_callback>CRM_Admin_Page_PdfFormats</page_callback>
+     <adminGroup>Configure</adminGroup>
+     <icon>admin/small/template.png</icon>
+     <weight>285</weight>
+  </item>
+  <item>
+     <path>civicrm/admin/labelFormats</path>
+     <title>Mailing Label Formats</title>
+     <desc>Configure Label Formats that are used when creating mailing labels.</desc>
+     <page_callback>CRM_Admin_Page_LabelFormats</page_callback>
+     <adminGroup>Configure</adminGroup>
+     <icon>admin/small/template.png</icon>
+     <weight>290</weight>
+  </item>
+  <item>
      <path>civicrm/admin/weight</path>
      <title>This should never be seen</title>
      <page_callback>CRM_Utils_Weight::fixOrder</page_callback>
@@ -332,7 +350,7 @@
      <weight>370</weight>
   </item>
   <item>
-     <path>civicrm/admin/options/language</path>
+     <path>civicrm/admin/options/languages</path>
      <title>Preferred Languages</title>
      <desc>Options for contact languages.</desc>
      <path_arguments>group=languages</path_arguments>
@@ -545,7 +563,7 @@
      <title>Price Sets</title>
      <page_callback>CRM_Price_Page_Set</page_callback>
      <desc>Price sets allow you to offer multiple options with associated fees (e.g. pre-conference workshops, additional meals, etc.). Configure Price Sets for events which need more than a single set of fee levels.</desc>
-     <access_arguments>administer CiviCRM,access CiviEvent</access_arguments>
+     <access_arguments>administer CiviCRM;access CiviEvent</access_arguments>
      <adminGroup>Customize</adminGroup>
      <icon>admin/small/price_sets.png</icon>
      <weight>380</weight>
@@ -565,7 +583,7 @@
      <title>New Price Set</title>
      <page_callback>CRM_Price_Page_Set</page_callback>
      <desc>Price sets allow you to offer multiple options with associated fees (e.g. pre-conference workshops, additional meals, etc.). Configure Price Sets for events which need more than a single set of fee levels.</desc>
-     <access_arguments>administer CiviCRM</access_arguments>
+     <access_arguments>administer CiviCRM;access CiviEvent</access_arguments>
      <path_arguments>action=add</path_arguments>
   </item>
   <item>

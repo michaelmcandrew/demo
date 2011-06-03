@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -30,7 +30,7 @@
  *
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -291,7 +291,13 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     if ( count( $values ) ) {
                         $formattedValues[$count]['additionalCustomPost'] = $values;
                     }
-                    $formattedValues[$count]['additionalCustomPost'] = array_diff_assoc( $formattedValues[$count]['additionalCustomPost'], $formattedValues[$count]['additionalCustomPre'] );
+
+                    if ( isset( $formattedValues[$count]['additionalCustomPre'] ) ) {
+                        $formattedValues[$count]['additionalCustomPost'] = 
+                            array_diff_assoc( $formattedValues[$count]['additionalCustomPost'],
+                                              $formattedValues[$count]['additionalCustomPre'] );
+                    }
+
                     $formattedValues[$count]['additionalCustomPostGroupTitle'] = CRM_Utils_Array::value( 'groupTitle', $groupName );
                 }
                 $count++; 
@@ -302,10 +308,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             $this->assign( 'addParticipantProfile' , $formattedValues );
         }
         
-        if( $this->_params[0]['amount'] == 0 ) {
-            $this->assign( 'isAmountzero', 1 );
-        }
-
+        //cosider total amount.
+        $this->assign( 'isAmountzero', ( $this->_totalAmount <= 0 ) ? true : false );
+        
         if ( $this->_paymentProcessor['payment_processor_type'] == 'Google_Checkout' && 
              ! CRM_Utils_Array::value( 'is_pay_later', $this->_params[0] ) && ! ( $this->_params[0]['amount'] == 0 ) &&
              !$this->_allowWaitlist && !$this->_requireApproval ) {
@@ -802,7 +807,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         }
         //CRM-4196        
         if ( $isAdditionalAmount ) {
-            $params['amount_level'] = $params['amount_level'].ts(' (multiple participants)'). CRM_Core_BAO_CustomOption::VALUE_SEPERATOR;
+            $params['amount_level'] = $params['amount_level'].ts(' (multiple participants)'). CRM_Core_DAO::VALUE_SEPARATOR;
         }
 
         $contribParams = array(
@@ -816,6 +821,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                                'currency'              => $params['currencyID'],
                                'source'                => $params['description'],
                                'is_pay_later'          => CRM_Utils_Array::value( 'is_pay_later', $params, 0 ),
+                               'campaign_id'           => CRM_Utils_Array::value( 'campaign_id', $params )
                                );
         
         if ( ! CRM_Utils_Array::value( 'is_pay_later', $params ) ) {
@@ -993,9 +999,16 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                                                                          $contactID, 
                                                                          $addToGroups, 
                                                                          null,
-                                                                         $ctype );
+                                                                         $ctype,
+                                                                         true );
         } else {
-            $contactID = CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, null, $addToGroups );
+            $contactID = CRM_Contact_BAO_Contact::createProfileContact( $params,
+                                                                        $fields,
+                                                                        null,
+                                                                        $addToGroups,
+                                                                        null,
+                                                                        null,
+                                                                        true );
             $this->set( 'contactID', $contactID );
         }
 

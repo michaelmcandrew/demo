@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -47,18 +47,21 @@
     {/if}
 
     {if $totalStatistics}
-      {if $outputMode eq 'html'}
-        {foreach from=$totalStatistics.filters item=row}
+          <h3>{ts}Report Filters{/ts}</h3>
           <table class="report-layout statistics-table">
-            <tr>
-              <th class="statistics" scope="row">{$row.title}</th>
-              <td>{$row.value}</td>
-            </tr>
+          {if $totalStatistics.filters}
+              {foreach from=$totalStatistics.filters item=row}
+                <tr>
+                    <th class="statistics">{$row.title}</th>
+                    <td>{$row.value}</td>
+                </tr>
+              {/foreach}
+          {else}
+            ( {ts}All Grants{/ts} )
+          {/if}
           </table>
-        {/foreach}
-      {/if}
 
-    <h3>{ts}Summary{/ts}</h2>
+    <h3>{ts}Summary Statistics{/ts}</h2>
     <table class="report-layout display">
       <tr> 
         <th class="statistics" scope="row"></th>
@@ -110,8 +113,5 @@
       {/foreach}
     </table>
     {/if}
-
-    <br />
-        {include file="CRM/Report/Form/ErrorMessage.tpl"}
     </div>
 {/if}

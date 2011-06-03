@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -38,15 +38,13 @@
   </div>
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
   <div id="choose-data-source" class="form-item">
-    <fieldset>
-      <legend>{ts}Choose Data Source{/ts}</legend>
+      <h3>{ts}Choose Data Source{/ts}</h3>
       <table class="form-layout">
         <tr class="crm-import-datasource-form-block-dataSource">
             <td class="label">{$form.dataSource.label}</td>
             <td>{$form.dataSource.html} {help id='data-source-selection'}</td>
         </tr>
       </table>
-    </fieldset>
   </div>
 
   {* Data source form pane is injected here when the data source is selected. *}
@@ -57,8 +55,7 @@
   </div>
 
   <div id="common-form-controls" class="form-item">
-    <fieldset>
-      <legend>{ts}Import Options{/ts}</legend>
+      <h3>{ts}Import Options{/ts}</h3>
       <table class="form-layout-compressed">
          <tr class="crm-import-datasource-form-block-contactType">
 	     <td class="label">{$form.contactType.label}</td>
@@ -94,7 +91,6 @@
          </tr>
         { /if}
  </table>
-    </fieldset>
   </div>
 
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"} </div>
@@ -127,7 +123,7 @@
 
       function buildSubTypes( )
       {
-        element = cj("'input[name=contactType]:checked'").val();
+        element = cj('input[name="contactType"]:checked').val( );
         var postUrl = {/literal}"{crmURL p='civicrm/ajax/subtype' h=0 }"{literal};
         var param = 'parentId='+ element;
         cj.ajax({ type: "POST", url: postUrl, data: param, async: false, dataType: 'json',

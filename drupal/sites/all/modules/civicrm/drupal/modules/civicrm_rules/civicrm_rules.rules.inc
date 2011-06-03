@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -136,6 +136,7 @@ function civicrm_rules_action_info() {
               'rules_action_civicrm_add_to_group' => 
               array(
                     'label' => t('Add Contact to CiviCRM Group'),
+		    'description' => t('Add Contact to CiviCRM Group.'),
                     'arguments' => array(
                                          'contact' => array('type' => 'contact',
                                                             'label' => t('Contact who should be added to the group')),
@@ -146,6 +147,7 @@ function civicrm_rules_action_info() {
               'rules_action_civicrm_remove_from_group' =>
               array(
                     'label' => t('Remove Contact from CiviCRM Group'),
+                    'description' => t('Remove Contact from CiviCRM Group.'),
                     'arguments' => array(
                                          'contact' => array('type' => 'contact',
                                                             'label' => t('Contact who should be removed from the group')),
@@ -156,6 +158,7 @@ function civicrm_rules_action_info() {
               'rules_action_civicrm_contact_send_email' => 
               array(
                     'label' => t('Send Email'),
+                    'description' => t('Send Email to a CiviCRM Contact.'),
                     'arguments' => array(
                                          'contact' => array('type' => 'contact',
                                                             'label' => t('Send Email'))
@@ -166,6 +169,7 @@ function civicrm_rules_action_info() {
               'rules_action_civicrm_mailing_send_email' =>
               array(
                     'label' => t('Send Email'),
+                    'description' => t('Send Email to a CiviCRM Mailing.'),
                     'arguments' => array(
                                          'mailing' => array('type' => 'mailing',
                                                             'label' => t('Send Email'))
@@ -327,8 +331,7 @@ function rules_action_civicrm_contact_create($first_name, $last_name, $email) {
                      'last_name'  => $last_name ,
                      'email'      => $email );
     
-    require_once 'api/v2/Contact.php';
-    $contact = civicrm_contact_create( $params );
+    $contact = civicrm_api('contact', 'create', $params);
 
     if ( ! $contact['is_error'] ) {
         return array( 'contact' => _civicrm_rules_load_contact( $contact['id'] ) );

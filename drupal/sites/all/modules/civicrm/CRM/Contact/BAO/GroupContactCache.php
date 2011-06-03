@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -65,7 +65,8 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
         $config  = CRM_Core_Config::singleton( );
         $smartGroupCacheTimeout = 
             isset( $config->smartGroupCacheTimeout ) && 
-            is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
+            is_numeric(  $config->smartGroupCacheTimeout ) ?
+            $config->smartGroupCacheTimeout : 0;
         
         //make sure to give original timezone settings again.
         $originalTimezone = date_default_timezone_get( );
@@ -74,10 +75,14 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
         date_default_timezone_set( $originalTimezone );
         
         $query  = "
-SELECT     g.id
-FROM       civicrm_group g
-WHERE      g.id IN ( {$groupID} ) AND ( g.saved_search_id IS NOT NULL OR g.children IS NOT NULL ) AND 
-          (g.cache_date IS NULL OR (TIMESTAMPDIFF(MINUTE, g.cache_date, $now) >= $smartGroupCacheTimeout))
+SELECT  g.id
+FROM    civicrm_group g
+WHERE   g.id IN ( {$groupID} ) 
+AND     ( g.saved_search_id IS NOT NULL OR 
+          g.children IS NOT NULL )
+AND     ( g.cache_date IS NULL OR
+          ( TIMESTAMPDIFF(MINUTE, g.cache_date, $now) >= $smartGroupCacheTimeout )
+        )
 ";
 
         $dao      =& CRM_Core_DAO::executeQuery( $query );
@@ -101,21 +106,12 @@ WHERE      g.id IN ( {$groupID} ) AND ( g.saved_search_id IS NOT NULL OR g.child
             $groupID = array( $groupID );
         }
 
-        $params['return.contact_id'] = 1;
-        $params['offset']            = 0;
-        $params['rowCount']          = 0;
-        $params['sort']              = null;
-        $params['smartGroupCache']   = false;
-
-        require_once 'api/v2/Contact.php';
-        
-        $values = array( );
-        foreach ( $groupID as $gid ) {
-            $params['group'] = array( );
-            $params['group'][$gid] = 1;
-
+        require_once 'CRM/Contact/BAO/Query.php';
+        $returnProperties = array('contact_id');
+        foreach ($groupID as $gid) {
+            $params = array(array('group', 'IN', array($gid => 1), 0, 0));
             // the below call update the cache table as a byproduct of the query
-            $contacts = civicrm_contact_search( $params );
+            CRM_Contact_BAO_Query::apiQuery($params, $returnProperties, null, null, 0, 0, false);
         }
     }
 
@@ -180,27 +176,34 @@ WHERE  id IN ( $groupIDs )
         $now = date( 'YmdHis' );
         date_default_timezone_set( $originalTimezone );
         
-        $config = CRM_Core_Config::singleton( );
-        $smartGroupCacheTimeout = 
-            isset( $config->smartGroupCacheTimeout ) && is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
-
         if ( ! isset( $groupID ) ) {
-            $query = "
-DELETE     g
-FROM       civicrm_group_contact_cache g
-INNER JOIN civicrm_contact c ON c.id = g.contact_id
-WHERE      g.group_id IN (
-    SELECT id
-    FROM   civicrm_group
-    WHERE  TIMESTAMPDIFF(MINUTE, cache_date, $now) >= $smartGroupCacheTimeout   
-)
-";
+            $config = CRM_Core_Config::singleton( );
+            $smartGroupCacheTimeout = 
+                isset( $config->smartGroupCacheTimeout ) && 
+                is_numeric(  $config->smartGroupCacheTimeout ) ?
+            $config->smartGroupCacheTimeout : 0;
 
-            $update = "
+            if ( $smartGroupCacheTimeout == 0 ) {
+                $query  = "
+TRUNCATE civicrm_group_contact_cache
+";
+                $update = "
+UPDATE civicrm_group g
+SET    cache_date = null
+";
+            } else {
+                $query = "
+DELETE     gc
+FROM       civicrm_group_contact_cache gc
+INNER JOIN civicrm_group g ON g.id = gc.group_id
+WHERE      TIMESTAMPDIFF(MINUTE, g.cache_date, $now) >= $smartGroupCacheTimeout   
+";
+                $update = "
 UPDATE civicrm_group g
 SET    cache_date = null
 WHERE  TIMESTAMPDIFF(MINUTE, cache_date, $now) >= $smartGroupCacheTimeout
 ";
+            }
             $params = array( );
         } else if ( is_array( $groupID ) ) {
             $query = "
@@ -248,6 +251,15 @@ WHERE  id = %1
         if ( $savedSearchID ) {
             require_once 'CRM/Contact/BAO/SavedSearch.php';
             $ssParams =& CRM_Contact_BAO_SavedSearch::getSearchParams($savedSearchID);
+
+            // rectify params to what proximity search expects if there is a value for prox_distance
+            // CRM-7021
+            if ( !empty( $ssParams ) ) { 
+                require_once 'CRM/Contact/BAO/ProximityQuery.php';
+                CRM_Contact_BAO_ProximityQuery::fixInputParams( $ssParams );
+            }
+
+            
             $returnProperties = array();
             if (CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch',
                                              $savedSearchID,

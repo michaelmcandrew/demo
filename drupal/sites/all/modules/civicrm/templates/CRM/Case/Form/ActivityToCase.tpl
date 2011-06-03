@@ -1,8 +1,8 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -181,8 +181,12 @@ function fileOnCase( action, activityID, currentCaseId ) {
 						      } else {
 						          var activitySubject = cj("#case_activity_subject").val( );
 						          var statusMsg = '<a id="closeFileOnCaseStatusMsg" href="#"><div class="ui-icon ui-icon-close" style="float:left"></div></a> "' + activitySubject + '" has been filed to selected case: ' + cj("#unclosed_cases").val( ) + '. Click <a href="' + caseUrl + '">here</a> to view that case.';
-						          cj('#fileOnCaseStatusMsg').addClass('msgok').html( statusMsg ).show( );
-                                  cj("#closeFileOnCaseStatusMsg").click(function(){ cj('#fileOnCaseStatusMsg').fadeOut("slow");return false;}).focus( );
+						          var context = {/literal}"{$context}"{literal};
+                                  if ( context ) {
+                                    context = '-' + context;
+                                  }
+                                  cj('#fileOnCaseStatusMsg' + context ).addClass('msgok').html( statusMsg ).show( );
+                                  cj("#closeFileOnCaseStatusMsg").click(function(){ cj('#fileOnCaseStatusMsg' + context ).fadeOut("slow");return false;}).focus( );
                              }
    					      }
                     }

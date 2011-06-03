@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -360,14 +360,13 @@ class CRM_Import_ImportJob {
         }
         //add Tag to Import   
 
-        if(is_array($this->_tag)) {
-
+        if ( is_array($this->_tag) ) {
             $tagAdditions = array();
             require_once "CRM/Core/BAO/EntityTag.php";
             foreach ($this->_tag as $tagId =>$val) {
                 $addTagCount = CRM_Core_BAO_EntityTag::addEntitiesToTag( $contactIds, $tagId );
                 $totalTagCount = $addTagCount[1];
-                if ($tagId == $addedTag->id) {
+                if ( isset( $addedTag ) && $tagId == $addedTag->id ) {
                     $tagName = $newTagName;
                     $new = true;
                 } else {

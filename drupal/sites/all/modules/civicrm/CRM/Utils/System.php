@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -52,14 +52,16 @@ class CRM_Utils_System {
      * @return string the url fragment
      * @access public
      */
-    static function makeURL( $urlVar, $includeReset = false, $includeForce = true ) {
-        $config   = CRM_Core_Config::singleton( );
-
-        if ( ! isset( $_GET[$config->userFrameworkURLVar] ) ) {
-            return '';
+    static function makeURL( $urlVar, $includeReset = false, $includeForce = true, $path = null ) {
+        if ( empty( $path ) ) {
+            $config = CRM_Core_Config::singleton( );
+            $path   = CRM_Utils_Array::value( $config->userFrameworkURLVar, $_GET );
+            if ( empty( $path ) ) {
+                return '';
+            }
         }
 
-        return self::url( $_GET[$config->userFrameworkURLVar],
+        return self::url( $path,
                           CRM_Utils_System::getLinksUrl( $urlVar, $includeReset, $includeForce ) );
     }
 
@@ -75,7 +77,7 @@ class CRM_Utils_System {
      * @return string
      * @access public
      */
-    static function getLinksUrl( $urlVar, $includeReset = false, $includeForce = true ) {
+    static function getLinksUrl( $urlVar, $includeReset = false, $includeForce = true, $skipUFVar = true ) {
         // Sort out query string to prevent messy urls
         $querystring = array();
         $qs          = array();
@@ -107,11 +109,15 @@ class CRM_Utils_System {
         if ($includeForce ) {
             $qs['force'] = 1;
         }
-        foreach ($qs as $name => $value) {
-            if ( $name == 'snippet' ) {
-                continue;
-            }
 
+        unset( $qs['snippet'] );
+
+        if ( $skipUFVar ) {
+            $config = CRM_Core_Config::singleton( );
+            unset( $qs[$config->userFrameworkURLVar] );
+        }
+
+        foreach ($qs as $name => $value) {
             if ( $name != 'reset' || $includeReset ) {
                 $querystring[] = $name . '=' . $value;
             }
@@ -798,11 +804,13 @@ class CRM_Utils_System {
         
         if ( ! $version ) {
             $verFile = implode( DIRECTORY_SEPARATOR, 
-                                array(dirname(__FILE__), '..', '..', 'civicrm-version.txt') );
+                                array(dirname(__FILE__), '..', '..', 'civicrm-version.php') );
             if ( file_exists( $verFile ) ) {
-                $str     = file_get_contents( $verFile );
-                $parts   = explode( ' ', $str );
-                $version = trim( $parts[0] );
+                require_once( $verFile );
+                if ( function_exists( 'civicrmVersion' ) ) {
+                    $info = civicrmVersion( );
+                    $version = $info['version'];
+                }
             } else {
                 // svn installs don't have version.txt by default. In that case version.xml should help - 
                 $verFile = implode( DIRECTORY_SEPARATOR,
@@ -880,12 +888,28 @@ class CRM_Utils_System {
         }
     }
 
+    /*
+     * Get logged in user's IP address. 
+     * 
+     * Get IP address from HTTP Header. If the CMS is Drupal then use the Drupal function 
+     * as this also handles reverse proxies (based on proper configuration in settings.php)
+     * 
+     * @return string ip address of logged in user
+     */
     static function ipAddress( ) {
         $address = CRM_Utils_Array::value( 'REMOTE_ADDR', $_SERVER );
+
+        $config   = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' ) {
+            //drupal function handles the server being behind a proxy securely
+            return ip_address( );   
+        }
+        
         // hack for safari
         if ( $address == '::1' ) {
             $address = '127.0.0.1';
         }
+
         return $address;
     }
 
@@ -1179,7 +1203,7 @@ class CRM_Utils_System {
         return $url;
     }
 
-    static function absoluteURL( $url ) {
+    static function absoluteURL($url, $removeLanguagePart = false) {
         // check if url is already absolute, if so return immediately
         if ( substr( $url, 0, 4 ) == 'http' ) {
             return $url;
@@ -1188,7 +1212,102 @@ class CRM_Utils_System {
         // make everything absolute from the baseFileURL
         $baseURL = self::baseCMSURL( );
 
+        //CRM-7622: drop the language from the URL if requested (and it’s there)
+        $config =& CRM_Core_Config::singleton();
+        if ($removeLanguagePart) {
+            $baseURL = self::languageNegotiationURL($baseURL, false, true);
+        }
+
         return $baseURL . $url;
+    }
+    
+    
+    /**
+     * Format the url as per language Negotiation.
+     * 
+     * @param string $url
+     *
+     * @return string $url, formatted url.
+     * @static
+     */
+    static function languageNegotiationURL( $url, 
+                                            $addLanguagePart    = true, 
+                                            $removeLanguagePart = false ) 
+    {
+        if ( empty( $url ) ) return $url;
+        
+        //upto d6 only, already we have code in place for d7 
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' && 
+             function_exists('variable_get') && 
+             module_exists('locale') ) {
+            global $language;
+            
+            //get the mode.
+            $mode = variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE );
+            
+            //url prefix / path.
+            if ( isset( $language->prefix ) &&
+                 $language->prefix &&
+                 in_array( $mode, array( LANGUAGE_NEGOTIATION_PATH,
+                                         LANGUAGE_NEGOTIATION_PATH_DEFAULT ) ) ) {
+                
+                if ( $addLanguagePart ) {
+                    $url .=  $language->prefix . '/';
+                }
+                if ( $removeLanguagePart ) {
+                    $url = str_replace( "/{$language->prefix}/", '/', $url );
+                }
+            }
+            if ( isset( $language->domain ) &&
+                 $language->domain &&
+                 $mode == LANGUAGE_NEGOTIATION_DOMAIN ) {
+                
+                if ( $addLanguagePart ) {
+                    $url = CRM_Utils_File::addTrailingSlash( $language->domain, '/' );
+                }
+                if ( $removeLanguagePart && defined( 'CIVICRM_UF_BASEURL' ) ) {
+                    $url = str_replace( '\\', '/', $url );
+                    $parseUrl = parse_url( $url );
+                    
+                    //kinda hackish but not sure how to do it right		
+                    //hope http_build_url() will help at some point.
+                    if ( is_array( $parseUrl ) && !empty( $parseUrl ) ) {
+                        $urlParts   = explode( '/', $url );
+                        $hostKey    = array_search( $parseUrl['host'], $urlParts );
+                        $ufUrlParts = parse_url( CIVICRM_UF_BASEURL );
+                        $urlParts[$hostKey] = $ufUrlParts['host'];
+                        $url = implode( '/', $urlParts );
+                    }
+                }
+            }
+        }
+        
+        return $url;
+    }
+
+    /**
+     * Append the contents of a javascript file if it is present in
+     * the custom template directory. This does not work if there are
+     * multiple custom template directories
+     *
+     * @param string $fileName - the name of the tpl file that we are processing
+     * @param string $content (by reference) - the current content string
+     *
+     * @return void - the content string is modified if needed
+     * @static
+     */
+    static function appendJSFile( $fileName, &$content ) {
+        $config =& CRM_Core_Config::singleton( );
+        if ( isset( $config->customTemplateDir ) &&
+             $config->customTemplateDir ) {
+            $additionalJSFile = str_replace( '.tpl', '.extra.js', $fileName );
+            // check if the file exists in the custom templates directory
+            $fileName = $config->customTemplateDir . DIRECTORY_SEPARATOR . $additionalJSFile;
+            if ( file_exists( $fileName ) ) {
+                $content .= "<script>\n" . file_get_contents( $fileName ) . "</script>";
+            }
+        }
     }
     
 }

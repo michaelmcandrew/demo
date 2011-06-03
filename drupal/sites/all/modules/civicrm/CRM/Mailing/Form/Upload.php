@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -395,7 +395,8 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         require_once 'CRM/Mailing/BAO/Mailing.php';
         CRM_Mailing_BAO_Mailing::create($params, $ids);
      
-        if ( $this->_submitValues['_qf_Upload_upload_save'] == 'Save & Continue Later' ) {
+        if ( isset($this->_submitValues['_qf_Upload_upload_save']) &&
+             $this->_submitValues['_qf_Upload_upload_save'] == 'Save & Continue Later' ) {
             //when user perform mailing from search context 
             //redirect it to search result CRM-3711.
             $ssID    = $this->get( 'ssID' );
@@ -423,12 +424,12 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
                 
                 //replace user context to search.
                 $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
-                CRM_Utils_System::redirect( $url );
+                return $this->controller->setDestination($url);
             } else { 
                 $status = ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.");
                 CRM_Core_Session::setStatus( $status );
                 $url = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1' );
-                CRM_Utils_System::redirect($url);
+                return $this->controller->setDestination($url);
             }
         }
     }
@@ -466,7 +467,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         $mailing->find(true);
 
         $session = CRM_Core_Session::singleton();
-        $values = array('contact_id' => $session->get('userID'));
+        $values = array('contact_id' => $session->get('userID') );
         require_once 'api/v2/Contact.php';
         $contact =& civicrm_contact_get( $values );
         

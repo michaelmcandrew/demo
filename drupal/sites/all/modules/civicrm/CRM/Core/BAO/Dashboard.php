@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -240,10 +240,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             // -lets use relative url for internal use.
             // -make sure relative url should not be htmlize.
             if ( substr( $dao->url, 0, 4 ) != 'http' ) {
-                if ( $config->userFramework == 'Joomla' ||
-                     ( $config->userFramework == 'Drupal' && !variable_get('clean_url', '0' ) ) ) {
-                    $url = CRM_Utils_System::url( $dao->url, null, false, null, false );
-                }
+                $urlParam = CRM_Utils_System::explode( '&', $dao->url, 2 );
+                $url      = CRM_Utils_System::url( $urlParam[0], $urlParam[1], false, null, false );
             }
             
             //get content from url
@@ -253,12 +251,17 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         }
 
         $dashletInfo = array( 'title'      => $dao->label,
-            'content'    => $dao->content);
+                              'content'    => $dao->content);
 
         if ( $dao->is_fullscreen ) {                       
-            $dashletInfo['fullscreen'] = $dao->content;
+            $fullscreenUrl = $dao->fullscreen_url;
+            if ( substr( $fullscreenUrl, 0, 4 ) != 'http' ) {
+                $urlParam = CRM_Utils_System::explode( '&', $dao->fullscreen_url, 2 );
+                $fullscreenUrl = CRM_Utils_System::url( $urlParam[0], $urlParam[1], true, null, false );
+            }
+            $dashletInfo['fullscreenUrl'] = $fullscreenUrl;
         }                     
-
+        
         return $dashletInfo;
     }
      

@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -39,6 +39,11 @@ require_once 'CRM/Core/Permission.php';
 class CRM_Report_Form_Instance {
 
     static function buildForm( &$form ) {
+        // we should not build form elements in dashlet mode
+        if ( $form->_section ) {
+            return;
+        }
+        
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Report_DAO_Instance' );
 
         $form->add( 'text',
@@ -121,6 +126,11 @@ class CRM_Report_Form_Instance {
     }
 
     static function setDefaultValues( &$form, &$defaults ) {
+        // we should not build form elements in dashlet mode
+        if ( $form->_section ) {
+            return;
+        }
+ 
         $instanceID = $form->getVar( '_id' );
         $navigationDefaults = array();
         require_once 'CRM/Core/Config.php';
@@ -260,11 +270,11 @@ class CRM_Report_Form_Instance {
                 if ( CRM_Utils_Array::value( 'charts', $params ) ) {
                     $section = 1;
                     $chart = "&charts=". $params['charts'];
-                    $dashletParams['is_fullscreen'] = 0;
                 }
 
-                $dashletParams['url'        ] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=4{$chart}";
-                $dashletParams['instanceURL'] = "civicrm/report/instance/{$dao->id}";
+                $dashletParams['url'           ] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=4{$chart}";
+                $dashletParams['fullscreen_url'] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=4{$chart}&context=dashletFullscreen";
+                $dashletParams['instanceURL'   ] = "civicrm/report/instance/{$dao->id}";
                 require_once 'CRM/Core/BAO/Dashboard.php';
                 CRM_Core_BAO_Dashboard::addDashlet(  $dashletParams );
             }

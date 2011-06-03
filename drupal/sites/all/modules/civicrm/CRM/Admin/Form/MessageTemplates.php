@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -66,6 +66,10 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
      */
     public function setDefaultValues( ) {
         $defaults = $this->_values;
+        
+        if ( is_null( $defaults['pdf_format_id'] ) ) {
+            $defaults['pdf_format_id'] = 'null';
+        }
         
         $this->_workflow_id = CRM_Utils_Array::value( 'workflow_id', $defaults );
         $this->assign( 'workflow_id', $this->_workflow_id );
@@ -198,6 +202,9 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
                                      'onkeyup' =>"return verify(this)" ) );
         }
 
+        require_once 'CRM/Core/BAO/PdfFormat.php';
+        $this->add( 'select', 'pdf_format_id', ts( 'PDF Page Format' ),
+                     array( 'null' => ts( '- default -' ) ) + CRM_Core_BAO_PdfFormat::getList( true ), false );
      
         $this->add('checkbox', 'is_active', ts('Enabled?'));
 

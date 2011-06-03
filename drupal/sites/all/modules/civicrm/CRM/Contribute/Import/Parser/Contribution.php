@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,13 +29,12 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
 
 require_once 'CRM/Contribute/Import/Parser.php';
-require_once 'api/v2/Contribution.php';
 
 /**
  * class to parse contribution csv files
@@ -251,7 +250,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
 
         $params =& $this->getActiveFieldParams( );            
                 
-        $formatted = array( );
+        $formatted = array('version' => 3);
 
         // don't add to recent items, CRM-4399
         $formatted['skipRecentView'] = true;
@@ -440,8 +439,9 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                 } else {
                     $cid = $matchedIDs[0];
                     $formatted['contact_id'] = $cid;
-                    
-                    $newContribution = civicrm_contribution_format_create( $formatted );
+                    $formatted['version'] = 2;
+
+                    $newContribution = civicrm_api('contribution', 'format_create', $formatted);
                     if ( civicrm_error( $newContribution ) ) { 
                         if ( is_array( $newContribution['error_message'] ) ) {
                             array_unshift($values, $newContribution['error_message']['message']);
@@ -455,6 +455,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                     }
                     
                     $this->_newContributions[] = $newContribution['id'];
+                    $formatted['contribution_id'] = $newContribution['id'];
                                       
                     //return soft valid since we need to show how soft credits were added
                     if ( CRM_Utils_Array::value( 'soft_credit_to', $formatted ) ) {
@@ -508,7 +509,8 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                     return CRM_Contribute_Import_Parser::ERROR;
                 }
             }
-            $newContribution = civicrm_contribution_format_create( $formatted );
+            $formatted['version'] = 2;
+            $newContribution = civicrm_api('contribution', 'format_create', $formatted);
             if ( civicrm_error( $newContribution ) ) { 
                 if ( is_array( $newContribution['error_message'] ) ) {
                     array_unshift($values, $newContribution['error_message']['message']);
@@ -522,6 +524,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             }
             
             $this->_newContributions[] = $newContribution['id'];
+            $formatted['contribution_id'] = $newContribution['id'];
                     
             //return soft valid since we need to show how soft credits were added
             if ( CRM_Utils_Array::value( 'soft_credit_to', $formatted ) ) {

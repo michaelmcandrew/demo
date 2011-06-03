@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -206,6 +206,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
         }
         $this->_params['invoiceID'] = $this->get( 'invoiceID' );
+        
+        //carry campaign from profile.
+        if ( array_key_exists( 'contribution_campaign_id', $this->_params ) ) {
+            $this->_params['campaign_id'] = $this->_params['contribution_campaign_id'];
+        }
+        
         $this->set( 'params', $this->_params );
     }
 
@@ -518,12 +524,23 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
 
             // if we find more than one contact, use the first one
             $contact_id  = CRM_Utils_Array::value( 0, $ids );
-            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, $contact_id, $addToGroups );
+            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params,
+                                                                         $fields,
+                                                                         $contact_id,
+                                                                         $addToGroups,
+                                                                         null,
+                                                                         null,
+                                                                         true );
             $this->set( 'contactID', $contactID );
         } else {
             $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactID, 'contact_type');
-            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, $contactID, $addToGroups,
-                                                                         null, $ctype);
+            $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params,
+                                                                         $fields,
+                                                                         $contactID,
+                                                                         $addToGroups,
+                                                                         null,
+                                                                         $ctype,
+                                                                         true );
         }
 
         //get email primary first if exist
@@ -578,6 +595,12 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             } else {
                 $membershipParams['cms_contactID'] = $contactID;
             } 
+            
+            //inherit campaign from contirb page.
+            if ( !array_key_exists( 'campaign_id', $membershipParams ) ) {
+                $membershipParams['campaign_id'] = CRM_Utils_Array::value( 'campaign_id', $this->_values );
+            }
+            
             require_once 'CRM/Member/BAO/Membership.php';
             CRM_Member_BAO_Membership::postProcessMembership( $membershipParams, $contactID,
                                                               $this, $premiumParams );                       
@@ -763,12 +786,17 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         }
         
         //get the contrib page id.
-        $contributionPageId = null;
+        $campaignId = $contributionPageId = null;
         if ( $online ) {
             $contributionPageId = $form->_id;
+            $campaignId = CRM_Utils_Array::value( 'campaign_id', $params );
+            if ( !array_key_exists( 'campaign_id', $params ) ) {
+                $campaignId = CRM_Utils_Array::value( 'campaign_id', $form->_values );
+            }
         } else {
             //also for offline we do support - CRM-7290
             $contributionPageId = CRM_Utils_Array::value( 'contribution_page_id', $params );
+            $campaignId = CRM_Utils_Array::value( 'campaign_id', $params  );
         }
         
         // first create the contribution record
@@ -790,6 +818,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                'cancel_reason'         => CRM_Utils_Array::value( 'cancel_reason', $params, 0),
                                'cancel_date'           => isset( $params['cancel_date'] ) ? CRM_Utils_Date::format( $params['cancel_date'] ) : null,
                                'thankyou_date'         => isset( $params['thankyou_date'] ) ? CRM_Utils_Date::format( $params['thankyou_date'] ) : null,
+                               'campaign_id'           => $campaignId,
                                );
         if ( ! $online && isset($params['thankyou_date'] ) ) {
             $contribParams['thankyou_date'] = $params['thankyou_date'];
@@ -808,8 +837,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                     'trxn_id'      => $result['trxn_id'],
                                     'receipt_date' => $receiptDate,
                                     // also add financial_trxn details as part of fix for CRM-4724
-                                    'trxn_result_code' => $result['trxn_result_code'],
-                                    'payment_processor' => $result['payment_processor'],
+                                    'trxn_result_code' => CRM_Utils_Array::value( 'trxn_result_code', $result ),
+                                    'payment_processor' => CRM_Utils_Array::value( 'payment_processor', $result )
                                     );
         }
         
@@ -937,7 +966,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $pledgeParams['is_test'                ] = $contribution->is_test;
                 $pledgeParams['acknowledge_date'       ] = date( 'Ymd' );
                 $pledgeParams['original_installment_amount'] = $pledgeParams['installment_amount'] ;
-
+                
+                //inherit campaign from contirb page. 
+                $pledgeParams['campaign_id']             = $campaignId;
+                
                 require_once 'CRM/Pledge/BAO/Pledge.php';
                 $pledge = CRM_Pledge_BAO_Pledge::create( $pledgeParams );
                 
@@ -1010,7 +1042,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                 'currency'          => $params['currencyID'],
                                 'payment_processor' => $form->_paymentProcessor['payment_processor_type'],
                                 'trxn_id'           => $result['trxn_id'],
-                                'trxn_result_code'  => $result['trxn_result_code'],
+                                'trxn_result_code'  => (isset($result['trxn_result_code']) ? $result['trxn_result_code'] : false),
                                 );
             
             require_once 'CRM/Core/BAO/FinancialTrxn.php';

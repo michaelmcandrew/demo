@@ -2,9 +2,9 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.3                                                |
+ | CiviCRM version 3.4                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -29,7 +29,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright CiviCRM LLC (c) 2004-2011
  * $Id$
  *
  */
@@ -129,6 +129,15 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         $this->_fields =& CRM_Contact_BAO_Contact::importableFields( 'All', true, true, true );
         $this->_fields = array_merge( CRM_Activity_BAO_Activity::exportableFields( 'Activity' ), $this->_fields );
+        
+        //unset campaign related fields.
+        if ( isset( $this->_fields['activity_campaign_id'] ) ) {
+            $this->_fields['activity_campaign_id']['title'] = ts( 'Campaign' );
+            if ( isset( $this->_fields['activity_campaign'] ) ) {
+                unset( $this->_fields['activity_campaign'] ); 
+            }
+        }
+        
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
             require_once "CRM/Contribute/BAO/Contribution.php";
             $this->_fields = array_merge ( CRM_Contribute_BAO_Contribution::getContributionFields(), $this->_fields );
@@ -136,7 +145,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
 
         if ( CRM_Core_Permission::access( 'CiviMember' ) ) {
             require_once 'CRM/Member/BAO/Membership.php';
-            $this->_fields = array_merge ( CRM_Member_BAO_Membership::getMembershipFields(), $this->_fields ); 
+            $this->_fields = array_merge ( CRM_Member_BAO_Membership::getMembershipFields(), $this->_fields );
         }
 
         if ( CRM_Core_Permission::access( 'CiviEvent' ) ) {
@@ -258,7 +267,9 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             unset( $fields['Household'   ]['county']);
             unset( $fields['Organization']['county']);
         }
-        
+
+        $fields['Contact'] = array( );
+
         //build the common contact fields array CRM-3037.
         foreach ( $fields['Individual'] as $key => $value ) {
             if ( CRM_Utils_Array::value( $key, $fields['Household'] ) && 
@@ -271,7 +282,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 unset( $fields['Organization'][$key] );
             }
         }
-        
+
         // add current employer for individuals
         $fields['Contact']['id'] = array( 'name'  => 'id',
                                           'title' => ts('Internal Contact ID') );
@@ -338,10 +349,18 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 unset($participantFields['external_identifier'] );
                 unset($participantFields['event_id'] );
                 unset($participantFields['participant_contact_id'] );
+                unset($participantFields['participant_role_id'] );
+                unset($participantFields['participant_status_id'] );
                 unset($participantFields['participant_is_test'] );
                 unset($participantFields['participant_fee_level'] );
                 unset($participantFields['participant_id'] );
                 unset($participantFields['participant_is_pay_later'] );
+                if ( isset( $participantFields['participant_campaign_id'] ) ) {
+                    $participantFields['participant_campaign_id']['title'] = ts( 'Campaign' );
+                    if ( isset( $participantFields['participant_campaign'] ) ) {
+                        unset( $participantFields['participant_campaign'] );
+                    }
+                }
                 $fields['Participant'] =& $participantFields;
             }
         }
@@ -369,6 +388,15 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             unset( $activityFields['activity_type_id'] );
             unset( $activityFields['is_current_revision'] );
             unset( $activityFields['is_deleted'] );
+
+            //unset campaign related fields.
+            if ( isset( $activityFields['activity_campaign_id'] ) ) {
+                $activityFields['activity_campaign_id']['title'] = ts( 'Campaign' );
+                if ( isset( $activityFields['activity_campaign'] ) ) {
+                    unset( $activityFields['activity_campaign'] ); 
+                }
+            }
+            
             $fields['Activity'] = $activityFields;
         }
         
@@ -549,7 +577,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->add( 'text', 'weight', ts('Order'), $attributes['weight'], true );
         $this->addRule( 'weight', ts('is a numeric field'), 'numeric' );
         
-        $this->add( 'textarea', 'help_post', ts('Field Help'), $attributes['help_post'] );
+        $this->add( 'textarea', 'help_pre', ts('Field Pre Help'), $attributes['help_pre'] );
+        $this->add( 'textarea', 'help_post', ts('Field Post Help'), $attributes['help_post'] );
        
         $this->add( 'checkbox', 'is_required', ts( 'Required?') );
         $this->add( 'checkbox', 'is_active', ts( 'Active?' ) );
@@ -829,16 +858,27 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         case 'Contact' :
             if ( in_array( 'Activity', $groupType ) ) {
-                $errors['field_name'] = 
-                    ts( 'Cannot add or update profile field type Contact with combination of Activity' ); 
+                //CRM-5803 - do not allow activity + contact.
+                //CRM-7603 - need to support activity + contact. 
+                
+                //$errors['field_name'] = ts( 'Cannot add or update profile field type Contact with combination of Activity' ); 
             } else {
                 self::formRuleSubType( $fieldType, $groupType, $errors );
             }
             break;    
         case 'Individual' :
-            if ( in_array( 'Activity', $groupType ) || in_array( 'Household', $groupType ) || in_array( 'Organization', $groupType ) ) {
-                $errors['field_name'] = 
-                    ts( 'Cannot add or update profile field type Individual with combination of Household or Organization or Activity' ); 
+            if ( in_array( 'Activity', $groupType ) || 
+                 in_array( 'Household', $groupType ) || 
+                 in_array( 'Organization', $groupType ) ) {
+                
+                //CRM-7603 - need to support activity + individual. 
+                //$errors['field_name'] = 
+                //ts( 'Cannot add or update profile field type Individual with combination of Household or Organization or Activity' ); 
+                if ( in_array( 'Household', $groupType ) || 
+                     in_array( 'Organization', $groupType ) ) {
+                    $errors['field_name'] = 
+                        ts( 'Cannot add or update profile field type Individual with combination of Household or Organization' ); 
+                }
             } else {
                 self::formRuleSubType( $fieldType, $groupType, $errors );
             }
@@ -860,10 +900,22 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             }
             break;
         case 'Activity' :
-                if ( in_array( 'Individual', $groupType ) || in_array( 'Membership', $groupType ) || in_array( 'Contribution', $groupType )
-                 || in_array( 'Organization', $groupType ) || in_array( 'Household', $groupType ) || in_array( 'Participant', $groupType )) {
-                $errors['field_name'] = 
-                    ts( 'Cannot add or update profile field type Activity with combination Participant or Membership or Contribution or Household or Organization or Individual' ); 
+            if ( in_array( 'Individual', $groupType ) || 
+                 in_array( 'Membership', $groupType ) || 
+                 in_array( 'Contribution', $groupType ) || 
+                 in_array( 'Organization', $groupType ) || 
+                 in_array( 'Household', $groupType ) || 
+                 in_array( 'Participant', $groupType )) {
+                
+                //CRM-7603 - need to support activity + contact type.
+                //$errors['field_name'] = 
+                //ts( 'Cannot add or update profile field type Activity with combination Participant or Membership or Contribution or Household or Organization or Individual' ); 
+                if ( in_array( 'Membership', $groupType ) || 
+                     in_array( 'Contribution', $groupType ) || 
+                     in_array( 'Participant', $groupType )) {
+                    $errors['field_name'] = 
+                        ts( 'Cannot add or update profile field type Activity with combination Participant or Membership or Contribution' ); 
+                }
             } else {
                 self::formRuleSubType( $fieldType, $groupType, $errors );
             }
