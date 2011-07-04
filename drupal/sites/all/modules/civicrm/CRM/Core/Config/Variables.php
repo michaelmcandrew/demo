@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -421,6 +421,10 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      */
     public $componentRegistry  = null;
 
+    /**
+     * PDF reciept as attachment is enabled 
+     */
+    public $doNotAttachPDFReceipt = true;
 
     /**
      * Provide addressSequence

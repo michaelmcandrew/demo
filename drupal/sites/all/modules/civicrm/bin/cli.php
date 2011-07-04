@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright Tech To The People http:tttp.eu (c) 2008                 |
  +--------------------------------------------------------------------+
@@ -87,15 +87,16 @@ class civicrm_CLI {
     
         $config =& CRM_Core_Config::singleton(); 
 
-        // this does not return on failure
-        // require_once 'CRM/Utils/System.php';
-        CRM_Utils_System::authenticateScript( true,$user,$pass );
-
+        $_SERVER['SERVER_SOFTWARE'] = null;
+        
         // bootstrap CMS environment
         global $civicrm_root;
         $_SERVER['SCRIPT_FILENAME'] = "$civicrm_root/bin/cli.php";
-        require_once 'CRM/Utils/System.php';
-        CRM_Utils_System::loadBootStrap($user, $pass);
+        
+        // this does not return on failure
+        // require_once 'CRM/Utils/System.php';
+        CRM_Utils_System::authenticateScript( true,$user,$pass );
+       
     }
 
     function setEnv() {
@@ -103,6 +104,7 @@ class civicrm_CLI {
         // so the configuration works with php-cli
         $_SERVER['PHP_SELF' ] ="/index.php";
         $_SERVER['HTTP_HOST']= $this->site;
+        $_SERVER['REMOTE_ADDR'] = "127.0.0.1";
 
         if (! function_exists( 'drush_get_context' ) ) {
             require_once ("./civicrm.config.php");

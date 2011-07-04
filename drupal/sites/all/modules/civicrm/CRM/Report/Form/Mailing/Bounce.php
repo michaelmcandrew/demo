@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -328,7 +328,7 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
     }
 
     function groupBy( ) {
-
+        $this->_groupBy = '';
         if ( CRM_Utils_Array::value('charts', $this->_params) ) {
             $this->_groupBy = " GROUP BY {$this->_aliases['civicrm_mailing']}.id";
         }
@@ -423,7 +423,7 @@ class CRM_Report_Form_Mailing_Bounce extends CRM_Report_Form {
 		$mailing->query($query);
 		
 		while($mailing->fetch()) {
-			$data[$mailing->name] = $mailing->name;
+			$data[mysql_real_escape_string($mailing->name)] = $mailing->name;
 		}
 
 		return $data;

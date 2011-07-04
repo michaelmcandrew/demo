@@ -1,7 +1,7 @@
 <?php
   /*
    +--------------------------------------------------------------------+
-   | CiviCRM version 3.4                                                |
+   | CiviCRM version 4.0                                                |
    +--------------------------------------------------------------------+
    | This file is a part of CiviCRM.                                    |
    |                                                                    |
@@ -28,17 +28,20 @@
   // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die( 'Restricted access' );
 
-class JElementCivievents extends JElement {
+class JFormFieldCiviEvents extends JFormField {
 	/**
 	 * Element name
 	 *
 	 * @access	protected
 	 * @var		string
 	 */
-	var	$_name = 'CiviEvents';
-	
-	function fetchElement( $name, $value, &$node, $control_name ) {
-		// Initiate CiviCRM
+    var	$_name = 'CiviEvents';
+    
+    protected function getInput() {
+		
+        $value = $this->value;
+        $name  = $this->name;
+        // Initiate CiviCRM
 		require_once JPATH_ROOT.'/'.'administrator/components/com_civicrm/civicrm.settings.php';
 		require_once 'CRM/Core/Config.php';
 		$config =& CRM_Core_Config::singleton( );
@@ -63,7 +66,7 @@ class JElementCivievents extends JElement {
 			}
 		}
         
-		return JHTML::_( 'select.genericlist', $options, ''.$control_name.'['.$name.']', null, 'value', 'text', $value, $control_name.$name );
+		return JHTML::_( 'select.genericlist', $options, $name, null, 'value', 'text', $value );
         
 	}
 }

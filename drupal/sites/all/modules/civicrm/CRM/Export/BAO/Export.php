@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -73,12 +73,13 @@ class CRM_Export_BAO_Export
                                       $componentClause = null,
                                       $componentTable  = null,
                                       $mergeSameAddress = false,
-                                      $mergeSameHousehold = false )
+                                      $mergeSameHousehold = false,
+                                      $exportParams = array() )
     {
         $headerRows = $returnProperties = array();
         $primary    = $paymentFields    = false;
         $origFields = $fields;
-        $queryMode  = null; 
+        $queryMode  = $relationField = null; 
         
         $allCampaigns = array( );
         $exportCampaign = false;
@@ -223,7 +224,7 @@ class CRM_Export_BAO_Export
                 $returnProperties['contribution_id'] = 1;
             } else if ( $exportMode == CRM_Export_Form_Select::EVENT_EXPORT ) {
                 $returnProperties['participant_id'] = 1;
-                if ( $returnProperties['participant_role'] ) {
+                if ( CRM_Utils_Array::value( 'participant_role', $returnProperties ) ) {
                     unset( $returnProperties['participant_role'] );
                     $returnProperties['participant_role_id'] = 1;
                 }
@@ -325,6 +326,15 @@ class CRM_Export_BAO_Export
 			$returnProperties['state_province_id'] = 1;
         }
         
+        if ( $componentTable && 
+             CRM_Utils_Array::value( 'additional_group', $exportParams ) ) {
+            // If an Additional Group is selected, then all contacts in that group are 
+            // added to the export set (filtering out duplicates). 
+            $query = "
+INSERT INTO {$componentTable} SELECT distinct gc.contact_id FROM civicrm_group_contact gc WHERE gc.group_id = {$exportParams['additional_group']} ON DUPLICATE KEY UPDATE {$componentTable}.contact_id = gc.contact_id";
+            CRM_Core_DAO::executeQuery( $query );
+        }
+
         if ( $moreReturnProperties ) {
             // fix for CRM-7066
             if ( CRM_Utils_Array::value( 'group', $moreReturnProperties ) ) {
@@ -494,6 +504,7 @@ class CRM_Export_BAO_Export
         
         $header = $addPaymentHeader = false;
         
+        $paymentDetails = array( );
         if ( $paymentFields ) {
             //special return properties for event and members
             $paymentHeaders = array( 'total_amount'        => ts('Total Amount'), 
@@ -843,7 +854,7 @@ class CRM_Export_BAO_Export
                 // add payment related information
                 if ( $paymentFields && isset( $paymentDetails[ $row[$paymentTableId] ] ) ) {
                     $row = array_merge( $row, $paymentDetails[ $row[$paymentTableId] ] );
-                } else if ( $paymentDetails ) {
+                } else if ( !empty($paymentDetails) ) {
                     $row = array_merge( $row, $nullContributionDetails );  
                 }
 
@@ -886,6 +897,12 @@ class CRM_Export_BAO_Export
                 self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
             }
             
+            // if postalMailing option is checked, exclude contacts who are deceased, have 
+            // "Do not mail" privacy setting, or have no street address
+            if ( $exportParams['postal_mailing_export']['postal_mailing_export'] == 1 ) {
+                self::postalMailingFormat( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
+            }
+
             // call export hook
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::export( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
@@ -896,11 +913,11 @@ class CRM_Export_BAO_Export
             // delete the export temp table and component table
             $sql = "DROP TABLE IF EXISTS {$exportTempTable}";
             CRM_Core_DAO::executeQuery( $sql );
+            
+            CRM_Utils_System::civiExit( );
         } else {
             CRM_Core_Error::fatal( ts( 'No records to export' ) );
-        }
-
-        CRM_Utils_System::civiExit( );
+        }        
     }
 
     /**
@@ -1436,6 +1453,50 @@ LIMIT $offset, $limit
                 $split[0] = $relationTypeName;
                 $header = implode( '-', $split );
             }
+        }
+    }
+
+    /**
+     * Function to exclude contacts who are deceased, have "Do not mail" privacy setting, 
+     * or have no street address
+     * 
+     */
+    function postalMailingFormat( $exportTempTable, $headerRows, $sqlColumns, $exportMode )
+    {
+        $whereClause = array();
+
+        if ( array_key_exists('is_deceased', $sqlColumns) ) {
+            $whereClause[] = 'is_deceased = 1';
+        }
+
+        if ( array_key_exists('do_not_mail', $sqlColumns) ) {
+            $whereClause[] = 'do_not_mail = 1';
+        }
+
+        if ( array_key_exists('street_address', $sqlColumns) ) {
+            $addressWhereClause = " ( (street_address IS NULL) OR (street_address = '') ) ";
+
+            // check for supplemental_address_1
+            if ( array_key_exists('supplemental_address_1', $sqlColumns) ) {
+                require_once 'CRM/Core/BAO/Preferences.php';
+                $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+                if ( CRM_Utils_Array::value( 'supplemental_address_1', $addressOptions ) ) {
+                    $addressWhereClause .= " AND ( (supplemental_address_1 IS NULL) OR (supplemental_address_1 = '') ) ";
+                    // enclose it again, since we are doing an AND in between a set of ORs
+                    $addressWhereClause = "( $addressWhereClause )";
+                }
+            }
+            
+            $whereClause[] = $addressWhereClause;
+        }
+
+        if ( !empty($whereClause) ) {
+            $whereClause = implode( ' OR ', $whereClause );
+            $query = "
+DELETE
+FROM   $exportTempTable
+WHERE  {$whereClause}";
+            CRM_Core_DAO::singleValueQuery( $query );
         }
     }
 }

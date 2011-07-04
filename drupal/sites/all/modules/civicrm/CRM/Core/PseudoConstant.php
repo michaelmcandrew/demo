@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -313,6 +313,13 @@ class CRM_Core_PseudoConstant
      * @static
      */
     private static $extensions = array( );
+    
+    /**
+     * activity contacts
+     * @var array
+     * @static
+     */
+    private static $activityContacts;
     
     /**
      * populate the object from the database. generic populate
@@ -1604,6 +1611,28 @@ ORDER BY name";
         }
 
         return self::$extensions;
+    }
+
+    /**
+     * Get all Activity Contacts
+     *
+     * The static array activityContacts is returned
+     *
+     * @access public
+     * @static
+     *
+     * @param boolean $all - get All activity Contacts - default is to get only active ones.
+     *
+     * @return array - array reference of all  activity Contacts
+     *
+     */
+    public static function &activityContacts( )
+    {
+        if ( ! self::$activityContacts ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$activityContacts = CRM_Core_OptionGroup::values('activity_contacts');
+        }
+        return self::$activityContacts;
     }
 }
 

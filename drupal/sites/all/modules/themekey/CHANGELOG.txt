@@ -1,23 +1,116 @@
-ThemeKey 6.x-3.3, 2011-04-27
+ThemeKey 7.x-1.0, 2011-05-23
 ----------------------------
-[#1030268] mkalkbrenner: Toggle "Property drupal:path is case sensitive" does not work; drupal:path is always case sensitive
-[#1038554] mkalkbrenner: Fixed Warning: First argument is expected to be a valid callback, 'theme_themekey_ui_theme_select_form' was given...
-[#1065878] mkalkbrenner: Error messages when activating all Themekey modules on a Standard English Drupal installation
+[        ] mkalkbrenner: fixed some debug informations
+[        ] mkalkbrenner: fixed php notice when saving rule chain with disabled elements
+[        ] mkalkbrenner: enabled theme switching on block configuration and disabled it on block demos
+[        ] mkalkbrenner: introduced additional arguments for mapping callback functions
+[        ] mkalkbrenner: introduced experimental module ThemeKey Compatibility
+[        ] mkalkbrenner: integrated Print module's paths to detect node ids
+[#1142402] mkalkbrenner: new property for POST variables: system:post
+[#1165324] TommyChris: use constant for watchdog error level
+[#1159326] mkalkbrenner: drupal:path does not respect operator
+[        ] mkalkbrenner: use full module names in ThemeKey Compatibility admin section
+
+
+ThemeKey 7.x-1.0-rc2, 2011-04-15
+--------------------------------
+[#1062966] mkalkbrenner: PHP 5.3 strict warning in themekey_help()
+[        ] mkalkbrenner: fixed fatal error in ThemekeyMultipleNodePropertiesTestCase
+[        ] mkalkbrenner: moved ThemeKey Example module to Development package
+[#1065878] mkalkbrenner: Error messages when activating all Themekey modules on a Standard English Drupal-7.0 installation
 [#1125920] mkalkbrenner: don't set $custom_theme to 'default'
-[        ] mkalkbrenner: Integrated Print module's paths to detect node ids
+[#1096356] mkalkbrenner: taxonomy:tid and taxonomy:tid_and_childs change themes for term nodes but not for nodes referencing terms
+[#1074066] mkalkbrenner: Theme Key works for a nodes comments/reply, but not for comments/n/edit or comments/n/delete
 
 
-ThemeKey 6.x-3.2, 2011-01-13
-----------------------------
-[#1022166] mkalkbrenner: Call to undefined function themekey_invoke_modules() during database update when updating from an old version
+ThemeKey 7.x-1.0-rc1, 2011-02-11
+--------------------------------
+[        ] mkalkbrenner: fixed admin theme and node admin theme in overlay again in a better way
+[#1046214] mkalkbrenner: fixed fatal error during installation
 
 
-ThemeKey 6.x-3.1, 2011-01-10
-----------------------------
-[       ] mkalkbrenner, cspitzlay: fixed signature of help form functions so default value for "collapsed" works
-[#948444] mkalkbrenner: added experimental features support
+ThemeKey 7.x-1.0-beta3, 2011-02-04
+----------------------------------
+[        ] mkalkbrenner: fixed admin theme and node admin theme in overlay
+[        ] mkalkbrenner: removed information about lazy session intitialization in Drupal 6
+[        ] mkalkbrenner: removed hook_themekey_load_validators and introduced 'file' and 'path' as arguments in hook_themekey_properties() instead
+[        ] mkalkbrenner: added module "ThemeKey Example" for developers
+[        ] mkalkbrenner: documented ThemeKey API aka hooks
+
+
+ThemeKey 7.x-1.0-beta2, 2011-02-01
+----------------------------------
+[        ] mkalkbrenner: fixed a warning and cleaned up some code
+[        ] mkalkbrenner: ThemeKey UI: Support multiple theme select form elements in one form
+[#1047316] mkalkbrenner: Selectable themes in theme form element provided by ThemeKey UI should be configurable
+[        ] mkalkbrenner: fixed fatal error when disabling module ThemeKey UI
+[        ] mkalkbrenner: fixed coding style
+[#1046214] mkalkbrenner: Selection of theme for user - Replacement for D6 Core feature that has been removed in D7 Core
+ 
+
+ThemeKey 7.x-1.0-beta1, 2011-01-31
+----------------------------------
 [       ] mkalkbrenner: fixed debug message constraints on settings page
-[#958184] LoMo: Edited English strings
+[#958174] LoMo: Edited English strings
+[#958824] LoMo: Extend themekey_browser_detection to include recognition of Windows 7 as useragent.
+[#997330] technicolorenvy: fixed formatting of error messages
+[#997330] technicolorenvy: fixed undefined function in themekey.install
+[#1022166] mkalkbrenner: Call to undefined function themekey_invoke_modules() during database update when updating from an old version
+[#1030268] mkalkbrenner: Toggle "Property drupal:path is case sensitive" does not work; drupal:path is always case sensitive
+[#1036138] mkalkbrenner: book_nodeapi() is not used on D7 : fatal error
+[        ] mkalkbrenner: created basic test framework for further simple tests
+[#731728] carstenmueller: added new property views:vid
+[#1037902] mkalkbrenner: D7: Errors in help section after installation
+[        ] carstenmueller: fixed wrong uri in themekey debug properties to set new rule
+[#1045094] webflo, LoMo: more SimpleTests
+[        ] carstenmueller, mkalkbrenner: set undefined language and LANGUAGE_NONE ('und') to 'neutral'
+[        ] pixeltank: ported some DB statements to the new API
+
+
+ThemeKey 7.x-1.0-alpha2, 2010-10-18
+-----------------------------------
+[       ] mkalkbrenner: rewritten rule chain form validation
+[       ] mkalkbrenner: moved dedicated debug code from themekey.module to themekey_debug.module
+[       ] mkalkbrenner: extended the debug module to detect if something else set a custom theme if no ThemeKey rule matched
+
+
+ThemeKey 7.x-1.0-alpha1, 2010-10-17
+-----------------------------------
+[       ] mkalkbrenner: used new hook_custom_theme instead of hook_init and replaced global variable $custom_theme by drupal_static
+[       ] mkalkbrenner: used coder module to convert ThemeKey to Drupal 7
+[       ] carstenmueller: upgraded themekey.install to Drupal 7
+[       ] carstenmueller: upgraded themekey_ui.install to Drupal 7
+[       ] carstenmueller: added files[] in themekey.info for upgreading to Drupal 7
+[       ] carstenmueller: improved themekey_ui_update_6200()
+[       ] carstenmueller: fixed db_fetch_array() calls in updates in themekey.install 
+[       ] mkalkbrenner: adjusted database code turned condition into object in themekey_match_rule_childs and themekey_match_condition
+[       ] carstenmueller: fixed db_fetch_array() calls in updates in themekey_ui_helper.ui 
+[       ] cspitzlay: moved examples and validators over from the themekey_properties module (which will be merged into themekey)
+[       ] carstenmueller: fixed db_fetch_array() calls
+[       ] mkalkbrenner: adjusted database code in themekey_load_rules and turned parameter into object in themekey_complete_path
+[       ] carstenmueller: fixed db_fetch_object() calls
+[       ] carstenmueller: replaced db_lock_table() by transactions (see http://drupal.org/node/355875)
+[       ] cspitzlay: moved property definitions, mapping definitions and mapping implementations over from the themekey_properties module; renamed browser detection class to contain "themekey"
+[       ] mkalkbrenner: fixed themekey_theme
+[       ] mkalkbrenner: fixed css classes in rule chain form
+[       ] mkalkbrenner: got themekey_debug to work
+[       ] carstenmueller: ported themekey_ui.module to Drupal 7
+[       ] mkalkbrenner: themekey_debug prevented theme switching
+[       ] mkalkbrenner: render forms in help section
+[       ] mkalkbrenner: don't scan for new properties provided by other modules on form submission
+[       ] cspitzlay: fixed signature of help form functions so default value for "collapsed" works
+[       ] cspitzlay: renamed property functions moved over from themekey_properties module
+[       ] mkalkbrenner: changed detection if theme switching fails due to another module
+[       ] cspitzlay: fixed the help forms: HTML content is displayed now.
+[       ] mkalkbrenner: fixed rule deletion and menu entries
+[       ] mkalkbrenner: set bartik as default theme
+[       ] mkalkbrenner: adjusted README
+[       ] mkalkbrenner: addded Configure links to module page
+[       ] carstenmueller: modified function themekey_taxonomy_vid2tid() to fit new taxonomy with field api
+[       ] carstenmueller: modified function themekey_taxonomy_vid2vid() to fit new taxonomy with field api
+[       ] EugenMayer, mkalkbrenner: ported themekey java script to D7
+[       ] mkalkbrenner: sanitized a lot of strings according to coder module
+[       ] carstenmueller: modified function themekey_ui_pathalias() to fit Drupal 7
 
 
 ThemeKey 6.x-3.0, 2010-10-14

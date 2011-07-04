@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -101,7 +101,8 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
         if (isset($validate) && $validate) {
             $page->validate();
         }
-
+        //will this work generally as TRUE (i.e., return output)
+        //was default, i.e., FALSE
         return $this->renderForm($page);
     }
 
@@ -133,7 +134,7 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
 
         $content = $template->fetch( $controller->getTemplateFile( ) );
 
-        CRM_Utils_System::appendJSFile( $pageTemplateFile, $content );
+        CRM_Utils_System::appendTPLFile( $pageTemplateFile, $content );
 
         $print = $controller->getPrint( );
         if ( $print ) {
@@ -157,6 +158,7 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
             CRM_Utils_System::civiExit( );
         }
 
+        print $html;
     }
 
     /**

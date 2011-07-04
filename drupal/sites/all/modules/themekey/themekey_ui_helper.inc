@@ -15,14 +15,14 @@
  *   @see http://drupal.org/user/35192
  */
 
-require_once(drupal_get_path('module', 'themekey') .'/themekey_build.inc');
+require_once DRUPAL_ROOT . '/' . drupal_get_path('module', 'themekey') . '/themekey_build.inc';
 
 /**
  * Returns a theme assigned to a Drupal path alias using
  * a ThemeKey Theme Switching Rule which is not part of a chain
  *
  * @param $path
- *   drupal path as string
+ *   Drupal path as string
  *
  * @return
  *   array with two elements:
@@ -32,12 +32,25 @@ require_once(drupal_get_path('module', 'themekey') .'/themekey_build.inc');
  */
 function themekey_ui_get_path_theme($path) {
   $serialized_empty_array = serialize(array());
-  if ($result = db_query("SELECT id, theme FROM {themekey_properties} WHERE property = 'drupal:path' AND operator = '=' AND value = '%s' AND wildcards = '%s' AND parent = 0", $path, $serialized_empty_array)) {
-    while ($row = db_fetch_array($result)) {
-      if (!db_result(db_query("SELECT COUNT(*) FROM {themekey_properties} WHERE parent = %d", $row['id']))) {
-        return array($row['id'], $row['theme']);
+  if ($result = db_select('themekey_properties', 'tp')
+      ->fields('tp', array('id', 'theme'))
+      ->condition('property', 'drupal:path')
+      ->condition('operator', '=')
+      ->condition('value', $path)
+      ->condition('wildcards', $serialized_empty_array)
+      ->condition('parent', 0)
+      ->execute()
+  ) {
+  
+    foreach ($result as $row) {
+      $query = db_select('themekey_properties', 'tp')
+      ->condition('parent', $row->id);
+      $query->addExpression('COUNT(*)');
+      if (!$query->execute()->fetchField()) {
+        return array($row->id, $row->theme);
       }
     }
+    
   }
 
   return array(0, 'default');

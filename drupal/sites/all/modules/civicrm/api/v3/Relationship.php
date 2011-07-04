@@ -1,28 +1,28 @@
 <?php
 /*
-  +--------------------------------------------------------------------+
-  | CiviCRM version 3.4                                                |
-  +--------------------------------------------------------------------+
-  | Copyright CiviCRM LLC (c) 2004-2011                                |
-  +--------------------------------------------------------------------+
-  | This file is a part of CiviCRM.                                    |
-  |                                                                    |
-  | CiviCRM is free software; you can copy, modify, and distribute it  |
-  | under the terms of the GNU Affero General Public License           |
-  | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
-  |                                                                    |
-  | CiviCRM is distributed in the hope that it will be useful, but     |
-  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
-  | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
-  | See the GNU Affero General Public License for more details.        |
-  |                                                                    |
-  | You should have received a copy of the GNU Affero General Public   |
-  | License and the CiviCRM Licensing Exception along                  |
-  | with this program; if not, contact CiviCRM LLC                     |
-  | at info[AT]civicrm[DOT]org. If you have questions about the        |
-  | GNU Affero General Public License or the licensing of CiviCRM,     |
-  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
-  +--------------------------------------------------------------------+
+ +--------------------------------------------------------------------+
+ | CiviCRM version 4.0                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2011                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
 */
 
 /**
@@ -43,11 +43,6 @@ require_once 'api/v3/utils.php';
 require_once 'CRM/Contact/BAO/Relationship.php';
 require_once 'CRM/Contact/BAO/RelationshipType.php';
 
-
-function civicrm_api3_relationship_getfields( $params ) {
-    $bao = new CRM_Contact_BAO_Relationship();
-    return ($bao->fields());
-}
 
 /**
  * Add or update a relationship
@@ -95,7 +90,6 @@ function civicrm_api3_relationship_create( $params ) {
         $ids   ['contact'      ]        = $params['contact_id_a'];
 
         $relationshipBAO = CRM_Contact_BAO_Relationship::create( $values, $ids );
-
         if ( is_a( $relationshipBAO, 'CRM_Core_Error' ) ) {
             return civicrm_api3_create_error( 'Relationship can not be created' );
         } else if ( $relationshipBAO[1] ) {
@@ -149,56 +143,6 @@ function civicrm_api3_relationship_delete( $params ) {
     }
 }
 
-/**
- * Function to update relationship
- *
- * @param  array $params   Associative array of property name/value pairs to update the relationship
- *
- * @return array Array with relationship information
- * @todo update is not in our crud scheme
- * @access public
- *
- */
-function civicrm_api3_relationship_update( $params ) {
-    try {
-        _civicrm_api3_initialize(true);
-
-        /*
-         * Erik Hommel, 5 Oct 2010 : fix for CRM-6895
-         * check if required field relationship_id is in the parms. As the
-         * CRM_Contact_BAO_Relationship::getRelatonship throws up some issues
-         * (CRM-6905) the relationship is retrieved with a direct query
-         */
-        civicrm_api3_verify_mandatory($params, 'CRM_Contact_DAO_Relationship', array('relationship_id'));
-
-        $names = array('id', 'contact_id_a', 'contact_id_b',
-                       'relationship_type_id', 'start_date', 'end_date', 'is_active',
-                       'description', 'is_permission_a_b', 'is_permission_b_a', 'case_id');
-       
-        $relationship_id = (int) $params['relationship_id'];
-        $query = "SELECT * FROM civicrm_relationship WHERE id = $relationship_id";
-        $daoRelations = & CRM_Core_DAO::executeQuery( $query );
-        while ($daoRelations->fetch()) {
-            foreach ($names as $name) {
-                $current_values[$name] = $daoRelations->$name;
-            }
-        }
-        $params = array_merge($current_values, $params);
-
-        $params['start_date'] = date("Ymd", strtotime($params['start_date']));
-        $params['end_date'] = date("Ymd", strtotime($params['end_date']));
-       
-        return civicrm_api3_relationship_create( $params );
-
-    } catch (PEAR_Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    } catch (Exception $e) {
-        return civicrm_api3_create_error( $e->getMessage() );
-    }
-
-
-}
-
 
 /**
  * Function to get the relationship
@@ -212,11 +156,12 @@ function civicrm_api3_relationship_update( $params ) {
  */
 function civicrm_api3_relationship_get($params) 
 {
-    _civicrm_api3_initialize(true );
+
     try{
         civicrm_api3_verify_mandatory($params, null,array('contact_id'));
  
         require_once 'CRM/Contact/BAO/Relationship.php';
+        $relationships= array();
         $contactID     = $params['contact_id'];
         $relationships = CRM_Contact_BAO_Relationship::getRelationship($contactID,
                                         CRM_Utils_Array::value('status_id',$params),
@@ -244,11 +189,9 @@ function civicrm_api3_relationship_get($params)
             }
         }
     
-        if ( $relationships ) {
-            return civicrm_api3_create_success( $relationships ,$params);
-        } else {
-            return civicrm_api3_create_error(  'Invalid Data'  );
-        }
+        
+        return civicrm_api3_create_success( $relationships ,$params);
+       
     } catch (PEAR_Exception $e) {
         return civicrm_api3_create_error( $e->getMessage() );
     } catch (Exception $e) {
@@ -298,12 +241,7 @@ function _civicrm_api3_relationship_format_params( $params, &$values ) {
             }
             break;
             
-        case 'start_date':
-        case 'end_date':
-            if (!CRM_Utils_Rule::qfDate($value)) {
-                return civicrm_api3_create_error("$key not a valid date: $value");
-            }
-            break;
+
             
         case 'relationship_type':
             foreach ( $relationTypes as $relTypId => $relValue ) {
@@ -353,13 +291,9 @@ function _civicrm_api3_relationship_format_params( $params, &$values ) {
     
     return array();
 }
-function _civicrm_api3_relationship_check_params( $params ) {
-    if(is_array($params['end_date'])){
-        $params['end_date'] = date("Ymd", strtotime($params['end_date']));
-    }  
-    if(is_array($params['start_date'])){ 
-        $params['start_date'] = date("Ymd", strtotime($params['start_date']));
-    }
+function _civicrm_api3_relationship_check_params( &$params ) {
+
+
     // check params for validity of Relationship id
     if ( CRM_Utils_Array::value( 'id', $params ) ) {
         require_once 'CRM/Contact/BAO/Relationship.php';

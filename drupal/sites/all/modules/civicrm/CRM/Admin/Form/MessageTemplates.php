@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -38,7 +38,7 @@ require_once 'CRM/Admin/Form.php';
 
 /**
  * This class generates form components for Message templates
- * used by memberhsip email and send email
+ * used by membership, contributions, event registrations, etc.
  * 
  */
 class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
@@ -59,7 +59,7 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
 
     /**
      * This function sets the default values for the form. 
-     * the default values are retrieved from the database
+     * The default values are retrieved from the database.
      * 
      * @access public
      * @return None
@@ -67,7 +67,7 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
     public function setDefaultValues( ) {
         $defaults = $this->_values;
         
-        if ( is_null( $defaults['pdf_format_id'] ) ) {
+        if ( ! CRM_Utils_Array::value( 'pdf_format_id', $defaults ) ) {
             $defaults['pdf_format_id'] = 'null';
         }
         

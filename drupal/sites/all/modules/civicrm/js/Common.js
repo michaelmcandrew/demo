@@ -1,6 +1,6 @@
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -453,7 +453,7 @@ function checkPerformAction (fldPrefix, form, taskButton) {
         gotTask = 1;
     } else if (document.forms[form].task.selectedIndex) {
 	//force user to select all search contacts, CRM-3711
-	if ( document.forms[form].task.value == 13 || document.forms[form].task.value == 14 || document.forms[form].task.value == 20 ) {
+	if ( document.forms[form].task.value == 13 || document.forms[form].task.value == 14 ) {
 	    var toggleSelect = document.getElementsByName('toggleSelect');
 	    if ( toggleSelect[0].checked || document.forms[form].radio_ts[0].checked ) {
 		return true;

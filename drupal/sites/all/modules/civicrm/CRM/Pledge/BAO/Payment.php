@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -333,6 +333,7 @@ WHERE     pledge_id = %1
         
         // if we get do not get contribution id means we are editing the scheduled payment.
         if ( !empty( $paymentIDs ) ) {
+            $editScheduled = false;
             $payments = implode( ',', $paymentIDs );
             $paymentContributionId  =  CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
                                                                     $payments,
@@ -368,6 +369,7 @@ WHERE     pledge_id = %1
                                                                'id'
                                                                );
             //  while editing scheduled  we need to check if we are editing last pending
+            $lastPending = false;
             if ( !$paymentContributionId ) {
                 $checkPendingCount = self::getOldestPledgePayment( $pledgeID, 2 );
                 if ( $checkPendingCount['count'] == 1 ) {

@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -38,10 +38,6 @@ class CiviReportMail {
         
         //log the execution of script
         CRM_Core_Error::debug_log_message( 'CiviReportMail.php' );
-
-        // load bootstrap to call hooks
-        require_once 'CRM/Utils/System.php';
-        CRM_Utils_System::loadBootStrap(  );
     }
 
     function initialize( ) {

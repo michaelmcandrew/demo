@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -65,6 +65,13 @@ class CRM_Mailing_Config extends CRM_Core_Component_Config {
     * @var int
     */
     public $mailerBatchLimit = 0;
+
+    /**
+     * How large should each mail thread be
+     *
+     * @var int
+     */
+    public $mailerJobSize = 0;
 
 }
 

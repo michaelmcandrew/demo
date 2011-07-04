@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -79,6 +79,25 @@
 {strip}
 <table class="crm-info-panel">
 {foreach from=$report.group.exclude item=group}
+<tr class="{cycle values="odd-row,even-row"}">
+<td>
+{if $group.mailing}
+{ts 1=$group.link 2=$group.name}Recipients of <a href="%1">%2</a>{/ts}
+{else}
+{ts 1=$group.link 2=$group.name}Members of <a href="%1">%2</a>{/ts}
+{/if}
+</td>
+</tr>
+{/foreach}
+</table>
+{/strip}
+{/if}
+
+{if $report.group.base|@count}
+<span class="label">{ts}Unsubscription Groups{/ts}</span>
+{strip}
+<table class="crm-info-panel">
+{foreach from=$report.group.base item=group}
 <tr class="{cycle values="odd-row,even-row"}">
 <td>
 {if $group.mailing}

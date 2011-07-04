@@ -451,6 +451,10 @@ div.spacer,
     border: 1px none;
 }
 
+#crm-container table.crm-profile-tagsandgroups {
+    margin-top: -1.25em;
+}
+
 #crm-container table.advmultiselect {
     margin: 0em;
     width: auto;
@@ -578,6 +582,7 @@ div.spacer,
 
 #crm-container div.status {
     background-color:#FFFFCC;
+    background-image:none;
     border:1px solid #FFFF66;
     margin:0.5em 0px;
     padding:0.25em 0.5em;
@@ -1574,7 +1579,7 @@ table.campaign td,
 
 #crm-container .panel {
     display  : none;
-    z-index  : 1;
+    z-index  : 9999;
     position : absolute;
     border-bottom:0px;
     background:transparent url(../i/dropdown-pointer.gif) no-repeat scroll 150px 1px;
@@ -2470,6 +2475,9 @@ span.icon {
 
 
 /* civicrm admin menu */
+#civicrm-menu {
+    height:27px;
+}
 
 #civicrm-menu .ac_input, #crm-container .ac_input {
     background:white url(../i/magnify.gif) no-repeat scroll right center;
@@ -2655,6 +2663,10 @@ div#crm-toolTip #hide-tooltip {
     position    : relative;
     z-index     : 1;
     margin-right : 45px;
+}
+
+#crm-container ul.token-input-list-facebook, ul.token-input-list-facebook li.leaf {
+  list-style-image:none;
 }
 
 /* "don't do this" icons */
@@ -3118,8 +3130,12 @@ div#crm-toolTip
 #crm-container .crm-row-highlight {
     background-color: #FFFFCC !important;
 }
-
 #crm-container .civicrm-drupal-wysiwyg .collapsed {
     background: transparent;
     padding-left: 0px;
-} 
+}
+
+#manageTags {
+    position: static;
+    z-index: -100;
+}

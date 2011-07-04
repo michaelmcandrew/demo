@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -105,8 +105,8 @@ function selectValue( val ) {
         } else if ( editor == "joomlaeditor" ) { 
             document.getElementById(html_message).value = '' ;
             tinyMCE.execCommand('mceSetContent',false, '');               
-        } else if (editor == "drupalwysiwyg") {
-            //doesn't work! WYSIWYG API doesn't support a clear or replace method
+        } else if ( editor =="drupalwysiwyg" ) {
+            //doesn't work! WYSIWYG API doesn't support a clear or replace method       
         } else {	
             document.getElementById(html_message).value = '' ;
         }
@@ -146,7 +146,7 @@ function selectValue( val ) {
             tinyMCE.execCommand('mceSetContent',false, html_body);           
         } else if ( editor =="drupalwysiwyg" ) {
             Drupal.wysiwyg.instances[html_message].insert(html_body);
-        } else {
+        } else {	
             cj("#"+ html_message).val( html_body );
         }
         if ( isPDF ) {
@@ -284,8 +284,6 @@ function selectValue( val ) {
         } else if ( editor == "ckeditor" ) {
             oEditor = CKEDITOR.instances[html_message];
             oEditor.insertHtml(token2.toString() );
-        } else if ( editor == "drupalwysiwyg" ) {
-            Drupal.wysiwyg.instances[html_message].insert(token2.toString());
         } else {
             var msg       = document.getElementById(html_message).value;
             var cursorlen = document.getElementById(html_message).selectionStart;

@@ -1,20 +1,20 @@
 <?php
 
 /**
- * Implementation of hook_features_api().
+ * Implements hook_features_api().
  */
 function themekey_features_features_api() {
   return array(
     'themekey_features_rule_chain' => array(
       'name' => t('ThemeKey Rule Chain'),
-      'default_hook' => 'themekey_features_rule_chain_import'
-    ),
+      'default_hook' => 'themekey_features_rule_chain_import',
+  ),
   );
 }
 
 
 /**
- * Implementation of hook_features_export_options().
+ * Implements hook_features_export_options().
  */
 function themekey_features_rule_chain_features_export_options() {
   $options = array();
@@ -31,7 +31,7 @@ function themekey_features_rule_chain_features_export_options() {
 
 
 /**
- * Implementation of hook_features_export().
+ * Implements hook_features_export().
  */
 function themekey_features_rule_chain_features_export($data, &$export, $module_name = '') {
   $export['dependencies']['features'] = 'features';
@@ -47,7 +47,7 @@ function themekey_features_rule_chain_features_export($data, &$export, $module_n
 
 
 /**
- * Implementation of hook_features_export_render().
+ * Implements hook_features_export_render().
  */
 function themekey_features_rule_chain_features_export_render($module_name, $data, $export = NULL) {
   $rules = themekey_features_load_rule_childs();
@@ -65,20 +65,23 @@ function themekey_features_rule_chain_features_export_render($module_name, $data
     define('THEMEKEY_PAGECACHE_SUPPORTED', 1);
     define('THEMEKEY_PAGECACHE_TIMEBASED', 2);
   }";
-  $code[] = '$rules = '. features_var_export($keep_rules) .';';
+  $code[] = '$rules = ' . features_var_export($keep_rules) . ';';
   $code[] = '';
   $code[] = 'return $rules;';
+
+
 
   return array('themekey_features_rule_chain_import' => implode("\n", $code));
 }
 
 
 /**
- * Implementation of hook_features_rebuild().
+ * Implements hook_features_rebuild().
  */
 function themekey_features_rule_chain_features_rebuild($module) {
   module_load_include('inc', 'themekey', 'themekey_build');
-  db_query('TRUNCATE {themekey_properties}');
+
+  db_truncate('themekey_properties');
   themekey_rebuild();
 
   $rules = module_invoke($module, 'themekey_features_rule_chain_import');
@@ -93,7 +96,7 @@ function themekey_features_rule_chain_features_rebuild($module) {
 
 
 /**
- * Implementation of hook_features_revert().
+ * Implements hook_features_revert().
  */
 function themekey_features_rule_chain_features_revert($module) {
   return themekey_features_rule_chain_features_rebuild($module);
@@ -113,19 +116,33 @@ function themekey_features_load_rule_childs($parent = 0) {
   module_load_include('inc', 'themekey', 'themekey_build');
 
   $rules = array();
-  if ($result = db_query("SELECT id FROM {themekey_properties} WHERE parent = %d ORDER BY weight", $parent)) {
-    while ($item = db_fetch_array($result)) {
+
+  if ($result = db_select('themekey_properties', 'tp')
+      ->fields('tp', array('id'))
+      ->condition('parent', $parent)
+      ->orderBy('weight', 'ASC')
+      ->execute()
+  ) {
+
+    foreach ($result as $record) {
+
       // we have to load the rule again using themekey_rule_get() which applies some transformations
-      $rule = themekey_rule_get($item['id']);
-      if ('drupal:path' != $rule['property']) {
+      $rule = themekey_rule_get($record->id);
+      if ('drupal:path' != $rule->property) {
         themekey_complete_path($rule);
       }
-      unset($rule['id']);
-      unset($rule['parent']);
-      unset($rule['weight']);
+      unset($rule->id);
+      unset($rule->parent);
+      unset($rule->weight);
 
-      $rules[] = array('rule' => $rule, 'string' => themekey_format_rule_as_string($item['id']), 'childs' => themekey_features_load_rule_childs($item['id']));
+      $rules[] = array(
+        'rule' => $rule,
+        'string' => themekey_format_rule_as_string($record->id),
+        'childs' => themekey_features_load_rule_childs($record->id),
+      );
+
     }
+
   }
 
   return $rules;

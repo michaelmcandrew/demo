@@ -1,5 +1,5 @@
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.4                                                |
+-- | CiviCRM version 4.0                                                |
 -- +--------------------------------------------------------------------+
 -- | Copyright CiviCRM LLC (c) 2004-2011                                |
 -- +--------------------------------------------------------------------+
@@ -285,7 +285,7 @@ INSERT INTO civicrm_country (id, name,iso_code,region_id,is_province_abbreviated
 INSERT INTO civicrm_country (id, name,iso_code,region_id,is_province_abbreviated) VALUES("1245", "Guernsey", "GG", "99", "0");
 INSERT INTO civicrm_country (id, name,iso_code,region_id,is_province_abbreviated) VALUES("1246", "Isle of Man", "IM", "99", "0");
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.4                                                |
+-- | CiviCRM version 4.0                                                |
 -- +--------------------------------------------------------------------+
 -- | Copyright CiviCRM LLC (c) 2004-2011                                |
 -- +--------------------------------------------------------------------+
@@ -4085,7 +4085,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (NULL, 1198, 'TO', 'Toledo' ),
 (NULL, 1198, 'CO', 'Córdoba' );
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.4                                                |
+-- | CiviCRM version 4.0                                                |
 -- +--------------------------------------------------------------------+
 -- | Copyright CiviCRM LLC (c) 2004-2011                                |
 -- +--------------------------------------------------------------------+
@@ -4295,7 +4295,7 @@ INSERT INTO civicrm_currency (id, name, symbol, numeric_code, full_name) VALUES
 (184, "ZMK", NULL, "894", "Zambian Kwacha"),
 (185, "ZWD", "Z$", "716", "Zimbabwe Dollar");
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.4                                                |
+-- | CiviCRM version 4.0                                                |
 -- +--------------------------------------------------------------------+
 -- | Copyright CiviCRM LLC (c) 2004-2011                                |
 -- +--------------------------------------------------------------------+
@@ -4376,7 +4376,7 @@ INSERT INTO civicrm_relationship_type( name_a_b,label_a_b, name_b_a,label_b_a, d
           ( 'Employee of', 'Employee of', 'Employer of', 'Angestellter von', 'Employment relationship.','Individual','Organization', 1 ),
           ( 'Volunteer for', 'Volunteer for', 'Volunteer is', 'Volunteer is', 'Volunteer relationship.','Individual','Organization', 0 ),
           ( 'Head of Household for', 'Head of Household for', 'Head of Household is', 'Head of Household is', 'Head of household.','Individual','Household', 1 ),
-          ( 'Household Member of', 'Household Member of', 'Household Member is', 'Mitglied der Haushalts ist', 'Household membership.','Individual','Household', 1 );
+          ( 'Household Member of', 'Household Member of', 'Household Member is', 'Mitglied des Haushalts ist', 'Household membership.','Individual','Household', 1 );
 
 -- Relationship Types for CiviCase
 INSERT INTO civicrm_relationship_type( name_a_b,label_a_b, name_b_a,label_b_a, description, contact_type_a, contact_type_b, is_reserved )
@@ -4400,13 +4400,13 @@ INSERT INTO civicrm_mailing_component
     (name,component_type,subject,body_html,body_text,is_default,is_active)
 VALUES
     ('Mailing Kopfzeile','Header','Descriptive Title for this Header','Sample Header for HTML formatted content.','Sample Header for TEXT formatted content.',1,1),
-    ('Mail Versand Fußzeile','Footer','Descriptive Title for this Footer.','Sample Footer for HTML formatted content<br/><a href=\"{action.optOutUrl}\">Unsubscribe</a>  <br/> {domain.address}','to unsubscribe: {action.optOutUrl}\n{domain.address}',1,1),
-    ('Subscribe Message','Subscribe','Abbonnement Bestätigungs Aufforderung','You have a pending subscription to the {subscribe.group} mailing list. To confirm this subscription, reply to this email or click <a href=\"{subscribe.url}\">here</a>.','You have a pending subscription to the {subscribe.group} mailing list. To confirm this subscription, reply to this email or click on this link: {subscribe.url}',1,1),
-    ('Willkomm Mitteilung','Welcome','Your Subscription has been Activated','Welcome. Your subscription to the {welcome.group} mailing list has been activated.','Welcome. Your subscription to the {welcome.group} mailing list has been activated.',1,1),
-    (' Abbestell Mitteilung','Unsubscribe','Un-subscribe Confirmation','You have been un-subscribed from the following groups: {unsubscribe.group}. You can re-subscribe by mailing {action.resubscribe} or clicking <a href=\"{action.resubscribeUrl}\">here</a>.','You have been un-subscribed from the following groups: {unsubscribe.group}. You can re-subscribe by mailing {action.resubscribe} or clicking %3',1,1),
-    ('Wieder Abonnier Mitteilung','Resubscribe','Re-subscribe Confirmation','You have been re-subscribed to the following groups: {resubscribe.group}. You can un-subscribe by mailing {action.unsubscribe} or clicking <a href=\"{action.unsubscribeUrl}\">here</a>.','You have been re-subscribed to the following groups: {resubscribe.group}. You can un-subscribe by mailing {action.unsubscribe} or clicking {action.unsubscribeUrl}',1,1),
+    ('Mailing Fußzeile','Footer','Descriptive Title for this Footer.','Sample Footer for HTML formatted content<br/><a href=\"{action.optOutUrl}\">Unsubscribe</a>  <br/> {domain.address}','to unsubscribe: {action.optOutUrl}\n{domain.address}',1,1),
+    ('Subscribe Message','Subscribe','Abbonnement Bestätigungsaufforderung','You have a pending subscription to the {subscribe.group} mailing list. To confirm this subscription, reply to this email or click <a href=\"{subscribe.url}\">here</a>.','You have a pending subscription to the {subscribe.group} mailing list. To confirm this subscription, reply to this email or click on this link: {subscribe.url}',1,1),
+    ('Willkommens-Mitteilung','Welcome','Your Subscription has been Activated','Welcome. Your subscription to the {welcome.group} mailing list has been activated.','Welcome. Your subscription to the {welcome.group} mailing list has been activated.',1,1),
+    (' Abbestell-Mitteilung','Unsubscribe','Un-subscribe Confirmation','You have been un-subscribed from the following groups: {unsubscribe.group}. You can re-subscribe by mailing {action.resubscribe} or clicking <a href=\"{action.resubscribeUrl}\">here</a>.','You have been un-subscribed from the following groups: {unsubscribe.group}. You can re-subscribe by mailing {action.resubscribe} or clicking %3',1,1),
+    ('Wieder-Abonniermitteilung','Resubscribe','Re-subscribe Confirmation','You have been re-subscribed to the following groups: {resubscribe.group}. You can un-subscribe by mailing {action.unsubscribe} or clicking <a href=\"{action.unsubscribeUrl}\">here</a>.','You have been re-subscribed to the following groups: {resubscribe.group}. You can un-subscribe by mailing {action.unsubscribe} or clicking {action.unsubscribeUrl}',1,1),
     ('Opt-Out Nachricht','OptOut','Opt-out Confirmation','Your email address has been removed from {domain.name} mailing lists.','Your email address has been removed from {domain.name} mailing lists.',1,1),
-    ('Beantworter in Abwesenheit','Reply','Please Send Inquiries to Our Contact Email Address','This is an automated reply from an un-attended mailbox. Please send any inquiries to the contact email address listed on our web-site.','This is an automated reply from an un-attended mailbox. Please send any inquiries to the contact email address listed on our web-site.',1,1);
+    ('Auto-responder','Reply','Please Send Inquiries to Our Contact Email Address','This is an automated reply from an un-attended mailbox. Please send any inquiries to the contact email address listed on our web-site.','This is an automated reply from an un-attended mailbox. Please send any inquiries to the contact email address listed on our web-site.',1,1);
 
 
 
@@ -4444,16 +4444,16 @@ VALUES
    ('user_dashboard_options'        , 'User Übersichtsseite Optionen'             , 0, 1),
    ('address_options'               , 'Addressing Options'                 , 0, 1),
    ('group_type'                    , 'Gruppenart'                         , 0, 1),
-   ('grant_status'                  , 'Unterstützung Status'                       , 0, 1),
-   ('grant_type'                    , 'Art der Zuwendung'                         , 0, 1),
-   ('honor_type'                    , 'Art der Ehrenmitgliedschaft'                         , 0, 1),
+   ('grant_status'                  , 'Beihilfenstatus'                       , 0, 1),
+   ('grant_type'                    , 'Art der Unterstützung'                         , 0, 1),
+   ('honor_type'                    , 'Art der Ehrung'                         , 0, 1),
    ('custom_search'                 , 'benutzerdefinierte Suche'                      , 0, 1),
    ('activity_status'               , 'Status der Aktivität'                    , 0, 1),
-   ('case_type'                     , 'Case Typ'                          , 0, 1),
-   ('case_status'                   , 'Case Status'                        , 0, 1),
+   ('case_type'                     , 'Fallart'                          , 0, 1),
+   ('case_status'                   , 'Fallstatus'                        , 0, 1),
    ('participant_listing'           , 'Teilnehmerliste'                , 0, 1),
    ('safe_file_extension'           , 'Safe File Extension'                , 0, 1),
-   ('from_email_address'            , 'Absender Email Adresse'                 , 0, 1),
+   ('from_email_address'            , 'Absender Email-Adresse'                 , 0, 1),
    ('mapping_type'                  , 'Zuordnungsart'                       , 0, 1),
    ('wysiwyg_editor'                , 'WYSIWYG Editor'                     , 0, 1),
    ('recur_frequency_units'         , 'Recurring Frequency Units'          , 0, 1), 
@@ -4469,7 +4469,7 @@ VALUES
    ('addressee'                     , 'Addressee Type'                     , 0, 1),
    ('contact_autocomplete_options'  , 'Autocomplete Contact Search'        , 0, 1),
    ('account_type'                  , 'Account type'                       , 0, 1),
-   ('website_type'                  , 'Website Type'                       , 0, 1),
+   ('website_type'                  , 'Webseitentyp'                       , 0, 1),
    ('tag_used_for'                  , 'Tag Used For'                       , 0, 1),
    ('currencies_enabled'            , 'List of currencies enabled for this site', 0, 1),
    ('event_badge'                   , 'Event Name Badge'                   , 0, 1),
@@ -4482,9 +4482,10 @@ VALUES
    ('mail_approval_status'          , 'CiviMail Approval Status'           , 0, 1),
    ('engagement_index'              , 'Engagement Index'                   , 0, 1),
    ('cg_extend_objects'             , 'Objects a custom group extends to'  , 0, 1),
-   ('paper_size'                    , 'Paper Size'                         , 0, 1),
+   ('paper_size'                    , 'Papiergröße'                         , 0, 1),
    ('pdf_format'                    , 'PDF Page Format'                    , 0, 1),
-   ('label_format'                  , 'Email-Bezeichnung Format'               , 0, 1);
+   ('label_format'                  , 'Email-Bezeichnung Format'               , 0, 1),
+   ('activity_contacts'             , 'Activity Contacts'                  , 0, 1);
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -4546,6 +4547,7 @@ SELECT @option_group_id_engagement_index := max(id) from civicrm_option_group wh
 SELECT @option_group_id_cgeo           := max(id) from civicrm_option_group where name = 'cg_extend_objects';
 SELECT @option_group_id_paperSize      := max(id) from civicrm_option_group where name = 'paper_size';
 SELECT @option_group_id_label          := max(id) from civicrm_option_group where name = 'label_format';
+SELECT @option_group_id_aco            := max(id) from civicrm_option_group where name = 'activity_contacts';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -4565,7 +4567,7 @@ VALUES
    (@option_group_id_pcm, 'SMS', 4, NULL, NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_pcm, 'Fax', 5, NULL, NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
  
-   (@option_group_id_act, 'Treffen',                            1, 'Meeting', NULL, 0, NULL, 1, NULL,                       				                                                0, 1, 1, NULL, NULL),
+   (@option_group_id_act, 'Treffen/Besprechung',                            1, 'Meeting', NULL, 0, NULL, 1, NULL,                       				                                                0, 1, 1, NULL, NULL),
    (@option_group_id_act, 'Telefonanruf',                         2, 'Phone Call',          NULL, 0, NULL, 2, NULL,                                                          				0, 1, 1, NULL, NULL),
    (@option_group_id_act, 'E-Mail',                              3, 'Email',               NULL, 1, NULL, 3, 'Email sent.',                                                          0, 1, 1, NULL, NULL),
    (@option_group_id_act, 'Text Message (SMS)',                 4, 'SMS',                 NULL, 1, NULL, 4, 'Text message (SMS) sent.',                                             0, 1, 1, NULL, NULL),
@@ -4590,7 +4592,7 @@ VALUES
    (@option_group_id_act, 'Assign Case Role',                   20, 'Assign Case Role', NULL,0, 0, 20, '', 0, 0, 1, @caseCompId, NULL),
    (@option_group_id_act, 'Remove Case Role',                   21, 'Remove Case Role', NULL,0, 0, 21, '', 0, 0, 1, @caseCompId, NULL),
    (@option_group_id_act, 'Print PDF Letter',                   22, 'Print PDF Letter',    NULL, 0, NULL, 22, 'Print PDF Letter.',                                                  0, 1, 1, NULL, NULL),
-   (@option_group_id_act, 'Merge Case',                         23, 'Merge Case', NULL, 0,  NULL, 23, '', 0, 1, 1, @caseCompId, NULL ),
+   (@option_group_id_act, 'Fall zusammenführen',                         23, 'Merge Case', NULL, 0,  NULL, 23, '', 0, 1, 1, @caseCompId, NULL ),
    (@option_group_id_act, 'Reassigned Case',                    24, 'Reassigned Case', NULL, 0,  NULL, 24, '', 0, 1, 1, @caseCompId, NULL ),
    (@option_group_id_act, 'Link Cases',                         25, 'Link Cases', NULL, 0,  NULL, 25, '', 0, 1, 1, @caseCompId, NULL ),
    (@option_group_id_act, 'Change Case Tags',                   26, 'Change Case Tags', NULL,0, 0, 26, '', 0, 1, 1, @caseCompId, NULL),
@@ -4659,13 +4661,13 @@ VALUES
 
   (@option_group_id_pRole, 'Attendee',  1, 'Attendee',  NULL, 1, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_pRole, 'Volunteer', 2, 'Volunteer', NULL, 1, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_pRole, 'Gastgeber',      3, 'Host',      NULL, 1, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_pRole, 'Host',      3, 'Host',      NULL, 1, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_pRole, 'Speaker',   4, 'Speaker',   NULL, 1, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
 
   (@option_group_id_etype, 'Conference', 1, 'Conference',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_etype, 'Exhibition', 2, 'Exhibition',  NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_etype, 'Fundraiser', 3, 'Fundraiser',  NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_etype, 'Treffen',    4, 'Meeting',     NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_etype, 'Treffen/Besprechung',    4, 'Meeting',     NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_etype, 'Performance',5, 'Performance', NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_etype, 'Workshop',   6, 'Workshop',    NULL, 0, NULL, 6, NULL, 0, 0, 1, NULL, NULL),
 
@@ -4676,15 +4678,15 @@ VALUES
   (@option_group_id_cvOpt, 'Gruppen'       ,   3, 'group', NULL, 0, NULL,  3,  NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_cvOpt, 'Notizen'        ,   4, 'note', NULL, 0, NULL,  4,  NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_cvOpt, 'Kategorien (Tags)'         ,   5, 'tag', NULL, 0, NULL,  5,  NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_cvOpt, 'Änderungs Log'   ,   6, 'log', NULL, 0, NULL,  6,  NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_cvOpt, 'Änderungshistorie'   ,   6, 'log', NULL, 0, NULL,  6,  NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_cvOpt, 'Zuwendungen',   7, 'CiviContribute', NULL, 0, NULL,  7,  NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_cvOpt, 'Mitgliedschaft'  ,   8, 'CiviMember', NULL, 0, NULL,  8,  NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_cvOpt, 'Veranstaltungen'       ,   9, 'CiviEvent', NULL, 0, NULL,  9,  NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_cvOpt, 'Fälle'        ,  10, 'CiviCase', NULL, 0, NULL,  10, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_cvOpt, 'Zuschüsse'       ,  11, 'CiviGrant', NULL, 0, NULL,  11, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_cvOpt, 'Darlehen/Bewilligungen'       ,  11, 'CiviGrant', NULL, 0, NULL,  11, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_cvOpt, 'Unterstützungszusagen'      ,  13, 'CiviPledge', NULL, 0, NULL,  13, NULL, 0, 0, 1, NULL, NULL),
 
-  (@option_group_id_ceOpt, 'Zusätzliche Daten'              ,   1, 'CustomData', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_ceOpt, 'Benutzerdefinierte Daten'              ,   1, 'CustomData', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_ceOpt, 'Adresse'                  ,   2, 'Address', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_ceOpt, 'Communication Preferences',   3, 'CommunicationPreferences', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_ceOpt, 'Notizen'                    ,   4, 'Notes', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
@@ -4712,6 +4714,7 @@ VALUES
   (@option_group_id_asOpt, 'Kontaktart'            ,  16, 'contactType', NULL, 0, NULL, 18, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_asOpt, 'Gruppen'                  ,  17, 'groups', NULL, 0, NULL, 19, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_asOpt, 'Kategorien (Tags)'                    ,  18, 'tags', NULL, 0, NULL, 20, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_asOpt, 'Mailing'                 ,  19, 'CiviMail', NULL, 0, NULL, 21, NULL, 0, 0, 1, NULL, NULL),
 
   (@option_group_id_udOpt, 'Gruppen'                     , 1, 'Groups', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_udOpt, 'Zuwendungen'              , 2, 'CiviContribute', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
@@ -4719,23 +4722,23 @@ VALUES
   (@option_group_id_udOpt, 'Veranstaltungen'                     , 4, 'CiviEvent', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_udOpt, 'My Contacts / Organizations', 5, 'Permissioned Orgs', NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_udOpt, 'Unterstützungszusagen'                    , 7, 'CiviPledge', NULL, 0, NULL, 7, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_udOpt, 'Persönliche Kampagne Seiten'    , 8, 'PCP', NULL, 0, NULL, 8, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_udOpt, 'Persönliche Kampagnenseiten'    , 8, 'PCP', NULL, 0, NULL, 8, NULL, 0, 0, 1, NULL, NULL),
 
-  (@option_group_id_acsOpt, 'Email Adresse'   , 2, 'email'         , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_acsOpt, 'Email-Adresse'   , 2, 'email'         , NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_acsOpt, 'Telefon'           , 3, 'phone'         , NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_acsOpt, 'Straße'  , 4, 'street_address', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_acsOpt, 'Stadt'            , 5, 'city'          , NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_acsOpt, 'Straße / Hausnr.'  , 4, 'street_address', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_acsOpt, 'Ort'            , 5, 'city'          , NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_acsOpt, 'Bundesland'  , 6, 'state_province', NULL, 0, NULL, 6, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_acsOpt, 'Land'         , 7, 'country'       , NULL, 0, NULL, 7, NULL, 0, 0, 1, NULL, NULL),
 
-  (@option_group_id_adOpt, 'Straße'    ,  1, 'street_address', NULL, 0, NULL,  1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_adOpt, 'Straße / Hausnr.'    ,  1, 'street_address', NULL, 0, NULL,  1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_adOpt, 'Adresszusatz 1'  ,  2, 'supplemental_address_1', NULL, 0, NULL,  2, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_adOpt, 'Adresszusatz 2'  ,  3, 'supplemental_address_2', NULL, 0, NULL,  3, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_adOpt, 'Stadt'              ,  4, 'city'          , NULL, 0, NULL,  4, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_adOpt, 'Ort'              ,  4, 'city'          , NULL, 0, NULL,  4, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_adOpt, 'PLZ' ,  5, 'postal_code'   , NULL, 0, NULL,  5, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_adOpt, 'Postleitzahlen-Suffix',  6, 'postal_code_suffix', NULL, 0, NULL,  6, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_adOpt, 'Ort'            ,  7, 'county'        , NULL, 0, NULL,  7, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_adOpt, 'Provinz / Bundesland'  ,  8, 'state_province', NULL, 0, NULL,  8, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_adOpt, 'Kreis'            ,  7, 'county'        , NULL, 0, NULL,  7, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_adOpt, 'Bundesland'  ,  8, 'state_province', NULL, 0, NULL,  8, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_adOpt, 'Land'           ,  9, 'country'       , NULL, 0, NULL,  9, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_adOpt, 'Breitengrad'          , 10, 'geo_code_1'    , NULL, 0, NULL, 10, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_adOpt, 'Längengrad'         , 11, 'geo_code_2', NULL, 0, NULL, 11, NULL, 0, 0, 1, NULL, NULL),
@@ -4801,10 +4804,10 @@ VALUES
   (@option_group_id_report, 'Participant list Count Report', 'event/participantlist', 'CRM_Report_Form_Event_ParticipantListCount', NULL, 0, 0, 31, 'Shows the Participant list with Participant Count.', 0, 0, 1, @eventCompId, NULL),
   (@option_group_id_report, 'Income Count Summary Report', 'event/incomesummary', 'CRM_Report_Form_Event_IncomeCountSummary', NULL, 0, 0, 32, 'Shows the Income Summary of events with Count.', 0, 0, 1, @eventCompId, NULL),
   (@option_group_id_report, 'Case Detail Report', 'case/detail', 'CRM_Report_Form_Case_Detail', NULL, 0, 0, 33, 'Case Details', 0, 0, 1, @caseCompId, NULL),
-  (@option_group_id_report, 'Mail Bounce Report', 'Mailing/bounce', 'CRM_Report_Form_Mailing_Bounce', NULL, 0, NULL, 34, 'Bounce Report for mailings', 0, 0, 1, @mailCompId, NULL),
+  (@option_group_id_report, 'Mail Bounce Bericht', 'Mailing/bounce', 'CRM_Report_Form_Mailing_Bounce', NULL, 0, NULL, 34, 'Bounce Report for mailings', 0, 0, 1, @mailCompId, NULL),
   (@option_group_id_report, 'Mail Summary Report', 'Mailing/summary', 'CRM_Report_Form_Mailing_Summary', NULL, 0, NULL, 35, 'Summary statistics for mailings', 0, 0, 1, @mailCompId, NULL),
-  (@option_group_id_report, 'Mail Opened Report', 'Mailing/opened', 'CRM_Report_Form_Mailing_Opened', NULL, 0, NULL, 36, 'Display contacts who opened emails from a mailing', 0, 0, 1, @mailCompId, NULL),
-  (@option_group_id_report, 'Mail Clickthrough Report', 'Mailing/clicks', 'CRM_Report_Form_Mailing_Clicks', NULL, 0, NULL, 37, 'Display clicks from each mailing', 0, 0, 1, @mailCompId, NULL),
+  (@option_group_id_report, 'Geöffnete Mails-Bericht', 'Mailing/opened', 'CRM_Report_Form_Mailing_Opened', NULL, 0, NULL, 36, 'Display contacts who opened emails from a mailing', 0, 0, 1, @mailCompId, NULL),
+  (@option_group_id_report, 'Mail Durchklick-Bericht', 'Mailing/clicks', 'CRM_Report_Form_Mailing_Clicks', NULL, 0, NULL, 37, 'Display clicks from each mailing', 0, 0, 1, @mailCompId, NULL),
   (@option_group_id_report, 'Contact Logging Report (Summary)', 'logging/contact/summary', 'CRM_Report_Form_Contact_LoggingSummary', NULL, 0, NULL, 38, 'Contact modification report for the logging infrastructure (summary).', 0, 0, 0, NULL, NULL),
   (@option_group_id_report, 'Contact Logging Report (Detail)', 'logging/contact/detail', 'CRM_Report_Form_Contact_LoggingDetail', NULL, 0, NULL, 39, 'Contact modification report for the logging infrastructure (detail).', 0, 0, 0, NULL, NULL),
   (@option_group_id_report, 'Contribute Logging Report (Summary)', 'logging/contribute/summary', 'CRM_Report_Form_Contribute_LoggingSummary', NULL, 0, NULL, 40, 'Contribute modification report for the logging infrastructure (summary).', 0, 0, 0, @contributeCompId, NULL),
@@ -5029,6 +5032,11 @@ VALUES
   (@option_group_id_paperSize, 'ISO SRA2',        '{"metric":"pt","width":1275.59,"height":1814.17}', 'sra2',        NULL, NULL, 0, 60, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_paperSize, 'ISO SRA3',        '{"metric":"pt","width":907.09,"height":1275.59}',  'sra3',        NULL, NULL, 0, 61, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_paperSize, 'ISO SRA4',        '{"metric":"pt","width":637.8,"height":907.09}',    'sra4',        NULL, NULL, 0, 62, NULL, 0, 0, 1, NULL, NULL),
+
+-- activity_contacts 
+   (@option_group_id_aco, 'Activity Assignees', 1, 'Activity Assignees', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aco, 'Activity Source', 2, 'Activity Source', NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_aco, 'Activity Targets', 3, 'Activity Targets', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
 -- Label Formats
   (@option_group_id_label, 'Avery 3475', '{"paper-size":"a4","orientation":"portrait","font-name":"helvetica","font-size":10,"font-style":"","metric":"mm","lMargin":0,"tMargin":5,"NX":3,"NY":8,"SpaceX":0,"SpaceY":0,"width":70,"height":36,"lPadding":5.08,"tPadding":5.08}',                   '3475',  'Avery', NULL, 0, 1,  NULL, 0, 1, 1, NULL, NULL), 
@@ -5307,13 +5315,13 @@ VALUES
 INSERT INTO
     civicrm_membership_status(name, label, start_event, start_event_adjust_unit, start_event_adjust_interval, end_event, end_event_adjust_unit, end_event_adjust_interval, is_current_member, is_admin, weight, is_default, is_active, is_reserved)
 VALUES
-    ('New',       'New', 'join_date', null, null,'join_date','month',3, 1, 0, 1, 0, 1, 0),
+    ('New',       'Neu', 'join_date', null, null,'join_date','month',3, 1, 0, 1, 0, 1, 0),
     ('Current',   'Current', 'start_date', null, null,'end_date', null, null, 1, 0, 2, 1, 1, 0),
     ('Grace',     'Grace', 'end_date', null, null,'end_date','month', 1, 1, 0, 3, 0, 1, 0),
     ('Expired',   'Abgelaufen', 'end_date', 'month', 1, null, null, null, 0, 0, 4, 0, 1, 0),
     ('Pending',   'Anstehend', 'join_date', null, null,'join_date',null,null, 0, 0, 5, 0, 1, 1),
     ('Cancelled', 'Storniert', 'join_date', null, null,'join_date',null,null, 0, 0, 6, 0, 1, 0),
-    ('Deceased',  'Deceased', null, null, null, null, null, null, 0, 1, 7, 0, 1, 1);
+    ('Deceased',  'Verstorben', null, null, null, null, null, null, 0, 1, 7, 0, 1, 1);
 
 
 INSERT INTO `civicrm_preferences_date`
@@ -5344,7 +5352,7 @@ VALUES
  ('AuthNet',            'Authorize.Net',          NULL,1,0,'API Login','Payment Key','MD5 Hash',NULL,'Payment_AuthorizeNet','https://secure.authorize.net/gateway/transact.dll',NULL,'https://api.authorize.net/xml/v1/request.api',NULL,'https://test.authorize.net/gateway/transact.dll',NULL,'https://apitest.authorize.net/xml/v1/request.api',NULL,1,1),
  ('PayJunction',        'Zahlungsfunktion',            NULL,1,0,'User Name','Password',NULL,NULL,'Payment_PayJunction','https://payjunction.com/quick_link',NULL,NULL,NULL,'https://www.payjunctionlabs.com/quick_link',NULL,NULL,NULL,1,1),
  ('eWAY',               'eWAY (Single Currency)', NULL,1,0,'Customer ID',NULL,NULL,NULL,'Payment_eWAY','https://www.eway.com.au/gateway_cvn/xmlpayment.asp',NULL,NULL,NULL,'https://www.eway.com.au/gateway_cvn/xmltest/testpage.asp',NULL,NULL,NULL,1,0),
- ('Payment_Express',    'Zahlungs Processor DPS Payment Express',    NULL,1,0,'User ID','Key','Mac Key - pxaccess only',NULL,'Payment_PaymentExpress','https://www.paymentexpress.com/pleaseenteraurl',NULL,NULL,NULL,'https://www.paymentexpress.com/pleaseenteratesturl',NULL,NULL,NULL,4,0),
+ ('Payment_Express',    'Zahlungsprocessor DPS Payment Express',    NULL,1,0,'User ID','Key','Mac Key - pxaccess only',NULL,'Payment_PaymentExpress','https://www.paymentexpress.com/pleaseenteraurl',NULL,NULL,NULL,'https://www.paymentexpress.com/pleaseenteratesturl',NULL,NULL,NULL,4,0),
  ('ClickAndPledge',     'Click and Pledge',       NULL,1,0,'Customer ID',NULL,NULL,NULL,'Payment_ClickAndPledge','http://www.clickandpledge.com/',NULL,NULL,NULL,'http://www.clickandpledge.com/',NULL,NULL,NULL,4,0),
  ('Dummy',              'Dummy Payment Processor',NULL,1,1,'Benutzername',NULL,NULL,NULL,'Payment_Dummy',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,1,NULL),
  ('Elavon',             'Elavon Payment Processor','Elavon / Nova Virtual Merchant',1,0,'SSL Merchant ID ','SSL User ID','SSL PIN',NULL,'Payment_Elavon','https://www.myvirtualmerchant.com/VirtualMerchant/processxml.do',NULL,NULL,NULL,'https://www.myvirtualmerchant.com/VirtualMerchant/processxml.do',NULL,NULL,NULL,1,0),
@@ -5354,38 +5362,38 @@ VALUES
 
 
 -- the fuzzy default dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Individual', 20, 'Fuzzy', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Individual', 20, 'Fuzzy', true, 'Individual-Fuzzy');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'first_name', 5),
        (@drgid, 'civicrm_contact', 'last_name',  7),
        (@drgid, 'civicrm_email'  , 'email',     10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Organization', 10, 'Fuzzy', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Organization', 10, 'Fuzzy', true, 'Organization-Fuzzy');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'organization_name', 10),
        (@drgid, 'civicrm_email'  , 'email',             10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Household', 10, 'Fuzzy', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Household', 10, 'Fuzzy', true, 'Household-Fuzzy');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
        (@drgid, 'civicrm_email'  , 'email',          10);
 
 -- the strict dedupe rules
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Individual', 10, 'Strict', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Individual', 10, 'Strict', true, 'Individual-Strict');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_email', 'email', 10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Organization', 10, 'Strict', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Organization', 10, 'Strict', true, 'Organization-Strict');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'organization_name', 10),
        (@drgid, 'civicrm_email'  , 'email',             10);
 
-INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default) VALUES ('Household', 10, 'Strict', true);
+INSERT INTO civicrm_dedupe_rule_group (contact_type, threshold, level, is_default, name) VALUES ('Household', 10, 'Strict', true, 'Household-Strict');
 SELECT @drgid := MAX(id) FROM civicrm_dedupe_rule_group;
 INSERT INTO civicrm_dedupe_rule (dedupe_rule_group_id, rule_table, rule_field, rule_weight)
 VALUES (@drgid, 'civicrm_contact', 'household_name', 10),
@@ -5634,7 +5642,9 @@ INSERT INTO civicrm_uf_group
     (5,  'new_organization',   'Organization,Contact','New Organization'  , 0,           1,           NULL),
     (6,  'new_household',      'Household,Contact',   'New Household'     , 0,           1,           NULL),
     (7,  'summary_overlay',    'Contact',   		  'Summary Overlay'   , 0,           1,           NULL),
-    (8,  'shared_address',     'Contact',   		  'Shared Address'    , 0,           1,           NULL);
+    (8,  'shared_address',     'Contact',   		  'Shared Address'    , 0,           1,           NULL),
+    (9,  'on_behalf_organization', 'Contact,Organization,Contribution,Membership', 
+    'Im Namen der Organisation'    , 0,           1,           NULL);
 
 INSERT INTO civicrm_uf_join
    (is_active,module,entity_table,entity_id,weight,uf_group_id)
@@ -5647,7 +5657,8 @@ VALUES
    (1, 'Profile', NULL, NULL, 4, 5),
    (1, 'Profile', NULL, NULL, 5, 6),
    (1, 'Profile', NULL, NULL, 6, 7),
-   (1, 'Profile', NULL, NULL, 7, 8);
+   (1, 'Profile', NULL, NULL, 7, 8),
+   (1, 'Profile', NULL, NULL, 8, 9);
    
 INSERT INTO civicrm_uf_field
        (id, uf_group_id, field_name,              is_required, is_reserved, weight, visibility,                  in_selector, is_searchable, location_type_id, label,                                         		field_type,    help_post, phone_type_id ) VALUES
@@ -5660,22 +5671,22 @@ INSERT INTO civicrm_uf_field
        (7,  1,           'state_province',        0,           0,           7,      'Public Pages and Listings', 1,           1,             1,                'State (Home)',          		'Contact',     NULL,  NULL),
        (8,  2,           'first_name',            1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             'Vorname',            		'Individual',  NULL,  NULL),
        (9,  2,           'last_name',             1,           0,           2,      'User and User Admin Only',  0,           0,             NULL,             'Nachname',             		'Individual',  NULL,  NULL),
-       (10, 2,           'email',                 1,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             'Email Adresse',         		'Contact',     NULL,  NULL),
+       (10, 2,           'email',                 1,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             'Email-Adresse',         		'Contact',     NULL,  NULL),
        (11, 3,           'participant_status', 1,           1,           1,      'User and User Admin Only',  0,           0,             NULL,             'Teilnehmerstatus',    		'Participant', NULL,  NULL),
        (12, 4,           'first_name',            1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             'Vorname',            		'Individual',  NULL,  NULL),
        (13, 4,           'last_name',             1,           0,           2,      'User and User Admin Only',  0,           0,             NULL,             'Nachname',             		'Individual',  NULL,  NULL),
-       (14, 4,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             'Email Adresse',         		'Contact',     NULL,  NULL),
+       (14, 4,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             'Email-Adresse',         		'Contact',     NULL,  NULL),
        (15, 5,           'organization_name',     1,           0,           2,      'User and User Admin Only',  0,           0,             NULL,             'Name der Organisation',     		'Organization',NULL,  NULL),
-       (16, 5,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             'Email Adresse',         		'Contact',     NULL,  NULL),
+       (16, 5,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             'Email-Adresse',         		'Contact',     NULL,  NULL),
        (17, 6,           'household_name',        1,           0,           2,      'User and User Admin Only',  0,           0,             NULL,             'Name des Haushalts',        		'Household',   NULL,  NULL),
-       (18, 6,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             'Email Adresse',         		'Contact',     NULL,  NULL),
+       (18, 6,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             'Email-Adresse',         		'Contact',     NULL,  NULL),
 	   (19 	,7 		    ,'phone' 				 ,1  	      ,0 			,1 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'Home Phone' 					,'Contact' 	  ,NULL,  1 ),
 	   (20 	,7 		    ,'phone' 				 ,1  	      ,0 			,2 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'Home Mobile' 					,'Contact' 	  ,NULL, 2 ),
 	   (21, 7, 			 'street_address', 		  1, 		   0, 			3, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   'Primary Address',		'Contact', 	   NULL,  NULL),
-	   (22, 7, 			 'city',				  1, 		   0, 			4, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   'Stadt',  						'Contact', 	   NULL,  NULL),
+	   (22, 7, 			 'city',				  1, 		   0, 			4, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   'Ort',  						'Contact', 	   NULL,  NULL),
 	   (23, 7, 			 'state_province', 		  1, 		   0, 			5, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   'Bundesland',  						'Contact', 	   NULL,  NULL),
-	   (24, 7, 			 'postal_code', 		  1, 		   0, 			6, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   'PLZ',  				'Contact', 	   NULL,  NULL),
-	   (25, 7, 			 'email', 				  1, 		   0, 			7, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   'Standard E-Mail-Adresse',  				'Contact', 	   NULL,  NULL),
+	   (24, 7, 			 'postal_code', 		  1, 		   0, 			6, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   'Postleitzahl',  				'Contact', 	   NULL,  NULL),
+	   (25, 7, 			 'email', 				  1, 		   0, 			7, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   'Haupt-Emailadresse',  				'Contact', 	   NULL,  NULL),
 	   (26, 7, 			 'group', 				  1, 		   0, 			8, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   'Gruppen',  					'Contact', 	   NULL,  NULL),
 	   (27, 7, 			 'tag', 				  1, 		   0, 			9, 	  	'User and User Admin Only',  0, 	      0, 		     NULL, 			   'Kategorien (Tags)', 						'Contact', 	   NULL,  NULL),
 	   (28  ,7  	    ,'gender'  				 ,1  	      ,0  			,10  	,'User and User Admin Only' ,0  		 ,0  			,NULL,  			 'Geschlecht'  						,'Individual' ,NULL,  NULL),
@@ -5684,7 +5695,15 @@ INSERT INTO civicrm_uf_field
        (31,  8,           'city',                  1,           1,           2,      'User and User Admin Only',  0,           0,             1,                'City (Home)',           		'Contact',     NULL,  NULL),
        (32,  8,           'postal_code',           0,           0,           3,      'User and User Admin Only',  0,           0,             1,                'Postal Code (Home)',    		'Contact',     NULL,  NULL),
        (33,  8,           'country',               0,           0,           4,      'Public Pages and Listings', 0,           1,             1,                'Country (Home)',        		'Contact',     NULL,  NULL),
-       (34,  8,           'state_province',        0,           0,           5,      'Public Pages and Listings', 1,           1,             1,                'State (Home)',          		'Contact',     NULL,  NULL);
+       (34,  8,           'state_province',        0,           0,           5,      'Public Pages and Listings', 1,           1,             1,                'State (Home)',          		'Contact',     NULL,  NULL),
+       (35,  9,           'organization_name',     1,           0,           1,      'User and User Admin Only',  0,           0,             NULL,             'Name der Organisation',              'Organization',NULL,  NULL),
+       (36,  9,           'phone',                 1,           0,           2,      'User and User Admin Only',  0,           0,             3,             'Phone (Main) ',                  'Contact',    NULL,   1),
+       (37,  9,           'email',                 1,           0,           3,      'User and User Admin Only',  0,           0,             3,             'Email (Main) ',                  'Contact',    NULL,   NULL),
+       (38,  9,           'street_address',        1,           0,           4,      'User and User Admin Only',  0,           0,             3,             'Straße / Hausnr.',                 'Contact',    NULL,   NULL),
+       (39,  9,           'city',                  1,           0,           5,      'User and User Admin Only',  0,           0,             3,             'Ort',                           'Contact',    NULL,   NULL),
+       (40,  9,           'postal_code',           1,           0,           6,      'User and User Admin Only',  0,           0,             3,             'Postleitzahl',                    'Contact',    NULL,   NULL),
+       (41,  9,           'country',               1,           0,           7,      'User and User Admin Only',  0,           0,             3,             'Land',                        'Contact',    NULL,   NULL),
+       (42,  9,           'state_province',        1,           0,           8,      'User and User Admin Only',  0,           0,             3,             'Bundesland',               'Contact',    NULL,   NULL);
 
 INSERT INTO civicrm_participant_status_type
   (id, name,                                  label,                                                       class,      is_reserved, is_active, is_counted, weight, visibility_id) VALUES
@@ -5696,10 +5715,17 @@ INSERT INTO civicrm_participant_status_type
   (6,  'Pending from incomplete transaction', 'Pending from incomplete transaction', 'Pending',  1,           1,         0,          6,      2            ),
   (7,  'On waitlist',                         'Auf Warteliste',                         'Waiting',  1,           0,         0,          7,      2            ),
   (8,  'Awaiting approval',                   'Warten auf Bestätigung',                   'Waiting',  1,           0,         1,          8,      2            ),
-  (9,  'Pending from waitlist',               'auf der Warteliste',               'Pending',  1,           0,         1,          9,      2            ),
+  (9,  'Pending from waitlist',               'Auf der Warteliste',               'Pending',  1,           0,         1,          9,      2            ),
   (10, 'Pending from approval',               'Wartet auf Bestätigung',               'Pending',  1,           0,         1,          10,     2            ),
   (11, 'Rejected',                            'zurückgewiesen',                            'Negative', 1,           0,         0,          11,     2            ),
   (12, 'Expired',                             'Abgelaufen',                             'Negative', 1,           1,         0,          12,     2            );
+
+-- CRM-8150
+INSERT INTO civicrm_action_mapping
+(entity, entity_value, entity_value_label, entity_status, entity_status_label, entity_date_start, entity_date_end, entity_recipient) 
+VALUES
+( 'civicrm_activity', 'activity_type', 'Activity Type', 'activity_status', 'Activity Status', 'activity_date_time', NULL, 'activity_contacts');
+
 
 INSERT INTO `civicrm_contact_type`
   (`id`, `name`, `label`,`image_URL`, `parent_id`, `is_active`,`is_reserved`)
@@ -5709,7 +5735,7 @@ INSERT INTO `civicrm_contact_type`
   ( 3, 'Organization', 'Organisation', NULL, NULL, 1, 1);
 
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.4                                                |
+-- | CiviCRM version 4.0                                                |
 -- +--------------------------------------------------------------------+
 -- | Copyright CiviCRM LLC (c) 2004-2011                                |
 -- +--------------------------------------------------------------------+
@@ -7091,16 +7117,14 @@ rule for Organizations to find the potential duplicates and merge them if approp
 {if $pcp_personal_note}{ts}Personal Note{/ts}: {$pcp_personal_note}{/if}
 
 {/if}
-{if $onBehalfName}
+{if $onBehalfProfile}
 ===========================================================
 {ts}On Behalf Of{/ts}
 
 ===========================================================
-{$onBehalfName}
-{$onBehalfAddress}
-
-{$onBehalfEmail}
-
+{foreach from=$onBehalfProfile item=onBehalfValue key=onBehalfName}
+{$onBehalfName}: {$onBehalfValue}
+{/foreach}
 {/if}
 
 {if !( $contributeMode eq \'notify\' OR $contributeMode eq \'directIPN\' ) and $is_monetary}
@@ -7394,19 +7418,22 @@ rule for Organizations to find the potential duplicates and merge them if approp
       {/if}
      {/if}
 
-     {if $onBehalfName}
+     {if $onBehalfProfile}
       <tr>
        <th {$headerStyle}>
-        {ts}On Behalf Of{/ts}
+        {$onBehalfProfile_grouptitle}
        </th>
       </tr>
-      <tr>
-       <td colspan="2" {$valueStyle}>
-        {$onBehalfName}<br />
-        {$onBehalfAddress|nl2br}<br />
-        {$onBehalfEmail}
-       </td>
-      </tr>
+      {foreach from=$onBehalfProfile item=onBehalfValue key=onBehalfName}
+        <tr>
+         <td {$labelStyle}>
+          {$onBehalfName}
+         </td>
+         <td {$valueStyle}>
+          {$onBehalfValue}
+         </td>
+        </tr>
+      {/foreach}
      {/if}
 
      {if ! ($contributeMode eq \'notify\' OR $contributeMode eq \'directIPN\') and $is_monetary}
@@ -7654,16 +7681,14 @@ rule for Organizations to find the potential duplicates and merge them if approp
 {if $pcp_personal_note}{ts}Personal Note{/ts}: {$pcp_personal_note}{/if}
 
 {/if}
-{if $onBehalfName}
+{if $onBehalfProfile}
 ===========================================================
 {ts}On Behalf Of{/ts}
 
 ===========================================================
-{$onBehalfName}
-{$onBehalfAddress}
-
-{$onBehalfEmail}
-
+{foreach from=$onBehalfProfile item=onBehalfValue key=onBehalfName}
+{$onBehalfName}: {$onBehalfValue}
+{/foreach}
 {/if}
 
 {if !( $contributeMode eq \'notify\' OR $contributeMode eq \'directIPN\' ) and $is_monetary}
@@ -7957,19 +7982,22 @@ rule for Organizations to find the potential duplicates and merge them if approp
       {/if}
      {/if}
 
-     {if $onBehalfName}
+     {if $onBehalfProfile}
       <tr>
        <th {$headerStyle}>
-        {ts}On Behalf Of{/ts}
+        {$onBehalfProfile_grouptitle}
        </th>
       </tr>
-      <tr>
-       <td colspan="2" {$valueStyle}>
-        {$onBehalfName}<br />
-        {$onBehalfAddress|nl2br}<br />
-        {$onBehalfEmail}
-       </td>
-      </tr>
+      {foreach from=$onBehalfProfile item=onBehalfValue key=onBehalfName}
+        <tr>
+         <td {$labelStyle}>
+          {$onBehalfName}
+         </td>
+         <td {$valueStyle}>
+          {$onBehalfValue}
+         </td>
+        </tr>
+      {/foreach}
      {/if}
 
      {if ! ($contributeMode eq \'notify\' OR $contributeMode eq \'directIPN\') and $is_monetary}
@@ -14257,16 +14285,14 @@ or want to inquire about reinstating your registration for this event.{/ts}</p>
 {if $pcp_personal_note}{ts}Personal Note{/ts}: {$pcp_personal_note}{/if}
 
 {/if}
-{if $onBehalfName}
+{if $onBehalfProfile}
 ===========================================================
 {ts}On Behalf Of{/ts}
 
 ===========================================================
-{$onBehalfName}
-{$onBehalfAddress}
-
-{$onBehalfEmail}
-
+{foreach from=$onBehalfProfile item=onBehalfValue key=onBehalfName}
+{$onBehalfName}: {$onBehalfValue}
+{/foreach}
 {/if}
 
 {if !( $contributeMode eq \'notify\' OR $contributeMode eq \'directIPN\' ) and $is_monetary}
@@ -14659,21 +14685,24 @@ or want to inquire about reinstating your registration for this event.{/ts}</p>
       {/if}
      {/if}
 
-     {if $onBehalfName}
+     {if $onBehalfProfile}
       <tr>
        <th {$headerStyle}>
-        {ts}On Behalf Of{/ts}
+        {$onBehalfProfile_grouptitle}
        </th>
       </tr>
-      <tr>
-       <td colspan="2" {$valueStyle}>
-        {$onBehalfName}<br />
-        {$onBehalfAddress|nl2br}<br />
-        {$onBehalfEmail}
-       </td>
-      </tr>
+      {foreach from=$onBehalfProfile item=onBehalfValue key=onBehalfName}
+        <tr>
+         <td {$labelStyle}>
+          {$onBehalfName}
+         </td>
+         <td {$valueStyle}>
+          {$onBehalfValue}
+         </td>
+        </tr>
+      {/foreach}
      {/if}
-
+     
      {if ! ($contributeMode eq \'notify\' OR $contributeMode eq \'directIPN\') and $is_monetary}
       {if $is_pay_later}
        <tr>
@@ -14947,16 +14976,14 @@ or want to inquire about reinstating your registration for this event.{/ts}</p>
 {if $pcp_personal_note}{ts}Personal Note{/ts}: {$pcp_personal_note}{/if}
 
 {/if}
-{if $onBehalfName}
+{if $onBehalfProfile}
 ===========================================================
 {ts}On Behalf Of{/ts}
 
 ===========================================================
-{$onBehalfName}
-{$onBehalfAddress}
-
-{$onBehalfEmail}
-
+{foreach from=$onBehalfProfile item=onBehalfValue key=onBehalfName}
+{$onBehalfName}: {$onBehalfValue}
+{/foreach}
 {/if}
 
 {if !( $contributeMode eq \'notify\' OR $contributeMode eq \'directIPN\' ) and $is_monetary}
@@ -15349,21 +15376,24 @@ or want to inquire about reinstating your registration for this event.{/ts}</p>
       {/if}
      {/if}
 
-     {if $onBehalfName}
+     {if $onBehalfProfile}
       <tr>
        <th {$headerStyle}>
-        {ts}On Behalf Of{/ts}
+        {$onBehalfProfile_grouptitle}
        </th>
       </tr>
-      <tr>
-       <td colspan="2" {$valueStyle}>
-        {$onBehalfName}<br />
-        {$onBehalfAddress|nl2br}<br />
-        {$onBehalfEmail}
-       </td>
-      </tr>
+      {foreach from=$onBehalfProfile item=onBehalfValue key=onBehalfName}
+        <tr>
+         <td {$labelStyle}>
+          {$onBehalfName}
+         </td>
+         <td {$valueStyle}>
+          {$onBehalfValue}
+         </td>
+        </tr>
+      {/foreach}
      {/if}
-
+     
      {if ! ($contributeMode eq \'notify\' OR $contributeMode eq \'directIPN\') and $is_monetary}
       {if $is_pay_later}
        <tr>
@@ -16467,7 +16497,7 @@ Email confirmation page: <a href="{$petition.confirmUrl} ">{$petition.confirmUrl
 <p>If you did not sign this petition, please ignore this message.</p>
 ', @tpl_ovid_petition_confirmation_needed, 0,          1) ;
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.4                                                |
+-- | CiviCRM version 4.0                                                |
 -- +--------------------------------------------------------------------+
 -- | Copyright CiviCRM LLC (c) 2004-2011                                |
 -- +--------------------------------------------------------------------+
@@ -16498,7 +16528,7 @@ SELECT @domainID := id FROM civicrm_domain where name = 'Default Domain Name';
 INSERT INTO 
      civicrm_preferences(domain_id, contact_id, is_domain, contact_view_options, contact_edit_options, advanced_search_options, user_dashboard_options, address_options, address_format, mailing_format, display_name_format, sort_name_format, address_standardization_provider, address_standardization_userid, address_standardization_url, editor_id, mailing_backend, contact_autocomplete_options )
 VALUES 
-     (@domainID,NULL,1,'123456789101113','1234567891011','1234567891011121315161718','1234578','123456891011','{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}','{contact.addressee}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}','{contact.individual_prefix}{ }{contact.first_name}{ }{contact.last_name}{ }{contact.individual_suffix}','{contact.last_name}{, }{contact.first_name}',NULL,NULL,NULL,2,'a:1:{s:15:"outBound_option";s:1:"3";}','12');
+     (@domainID,NULL,1,'123456789101113','1234567891011','123456789101112131516171819','1234578','123456891011','{contact.address_name}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}','{contact.addressee}\n{contact.street_address}\n{contact.supplemental_address_1}\n{contact.supplemental_address_2}\n{contact.city}{, }{contact.state_province}{ }{contact.postal_code}\n{contact.country}','{contact.individual_prefix}{ }{contact.first_name}{ }{contact.last_name}{ }{contact.individual_suffix}','{contact.last_name}{, }{contact.first_name}',NULL,NULL,NULL,2,'a:1:{s:15:"outBound_option";s:1:"3";}','12');
 
 
 -- mail settings 
@@ -16511,7 +16541,7 @@ INSERT INTO `civicrm_dashboard`
     ( `domain_id`, `label`, `url`, `content`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `created_date`, `fullscreen_url`, `is_fullscreen`, `is_reserved`) 
     VALUES 
     ( @domainID, 'Aktivitäten', 'civicrm/dashlet/activity&reset=1&snippet=4', NULL, 'access CiviCRM', NULL, 0, 0, 1, 1, NULL, 'civicrm/dashlet/activity&reset=1&snippet=4&context=dashletFullscreen', 1, 1),
-    ( @domainID, 'Meine Aufgaben', 'civicrm/dashlet/myCases&reset=1&snippet=4', NULL, 'access my cases and activities', NULL , 0, 0, 1, 2, NULL, 'civicrm/dashlet/myCases&reset=1&snippet=4&context=dashletFullscreen', 1, 1),
+    ( @domainID, 'Meine Fälle', 'civicrm/dashlet/myCases&reset=1&snippet=4', NULL, 'access my cases and activities', NULL , 0, 0, 1, 2, NULL, 'civicrm/dashlet/myCases&reset=1&snippet=4&context=dashletFullscreen', 1, 1),
     ( @domainID, 'Alle Aufgaben', 'civicrm/dashlet/allCases&reset=1&snippet=4', NULL, 'access all cases and activities', NULL , 0, 0, 1, 3, NULL, 'civicrm/dashlet/allCases&reset=1&snippet=4&context=dashletFullscreen', 1, 1);
 
 -- navigation 
@@ -16786,7 +16816,8 @@ VALUES
     ( @domainID, 'civicrm/admin/options/from_email_address&group=from_email_address&reset=1', 'FROM Email Addresses', 'FROM Email Addresses',    'administer CiviCRM', '', @configurelastID, '1', NULL, 6 ), 
     ( @domainID, 'civicrm/admin/setting/updateConfigBackend&reset=1',  'Update Directory Path and URL', 'Update Directory Path and URL',         'administer CiviCRM', '', @configurelastID, '1', NULL, 7 ),
     ( @domainID, 'civicrm/admin/pdfFormats&reset=1',                   'PDF Page Formats',       'PDF Page Formats',         'administer CiviCRM', '', @configurelastID, '1', NULL, 8 ), 
-    ( @domainID, 'civicrm/admin/labelFormats&reset=1',                 'Mailing Label Formats',  'Mailing Label Formats',    'administer CiviCRM', '', @configurelastID, '1', NULL, 9 );
+    ( @domainID, 'civicrm/admin/labelFormats&reset=1',                 'Mailing Label Formats',  'Mailing Label Formats',    'administer CiviCRM', '', @configurelastID, '1', NULL, 9 ),
+   ( @domainID, 'civicrm/admin/scheduleReminders&reset=1',              'Schedule Reminders',    'Schedule Reminders',       'administer CiviCRM', '', @configurelastID, '1', NULL, 10 );
 
     
 INSERT INTO civicrm_navigation
@@ -17356,4 +17387,4 @@ VALUES
     ( @domainID, CONCAT('civicrm/report/instance/', @instanceID, '&reset=1'), 'Survey Report (Detail)', 'Survey Report (Detail)', 'administer CiviCampaign,manage campaign,interview campaign contacts', 'OR', @reportlastID, '1', NULL, @instanceID+2 );
 UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID;
 
- UPDATE civicrm_domain SET version = '3.4.2';
+ UPDATE civicrm_domain SET version = '4.0.4';

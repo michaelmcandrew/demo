@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -104,7 +104,15 @@ class CRM_Contact_Form_Task_AddToGroup extends CRM_Contact_Form_Task {
             require_once 'CRM/Core/OptionGroup.php';
             $groupTypes = CRM_Core_OptionGroup::values( 'group_type', true );
             if ( ! CRM_Core_Permission::access( 'CiviMail' ) ) {
-                unset( $groupTypes['Mailing List'] );
+                require_once 'CRM/Mailing/Info.php';
+                $isWorkFlowEnabled = CRM_Mailing_Info::workflowEnabled( );
+                if ( $isWorkFlowEnabled && 
+                     !CRM_Core_Permission::check( 'create mailings' ) &&
+                     !CRM_Core_Permission::check( 'schedule mailings' ) &&
+                     !CRM_Core_Permission::check( 'approve mailings' )
+                     ) {
+                    unset( $groupTypes['Mailing List'] );
+                }
             }
             
             if ( ! empty( $groupTypes ) ) {
@@ -198,7 +206,7 @@ class CRM_Contact_Form_Task_AddToGroup extends CRM_Contact_Form_Task {
      */
     public function postProcess() {
         $params = $this->controller->exportValues( );
-        $groupOption = $params['group_option'];
+        $groupOption = CRM_Utils_Array::value( 'group_option', $params, null );
         if ( $groupOption ) {
             $groupParams = array();
             $groupParams['title'      ] = $params['title'];

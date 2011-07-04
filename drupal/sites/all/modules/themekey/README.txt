@@ -5,18 +5,19 @@ ThemeKey
 Name: themekey
 Authors: Markus Kalkbrenner | Cocomore AG
          Carsten Müller | Cocomore AG
+         Christian Spitzlay | Cocomore AG
          Thilo Wawrzik <drupal at profix898 dot de>
-Drupal: 6.x
+Drupal: 7.x
 Sponsor: Cocomore AG - http://www.cocomore.com
-
+                     - http://drupal.cocomore.com
 
 Description
 ===========
 
-ThemeKey is designed to be a generic theme switching module. It
+ThemeKey is meant to be a generic theme switching module. It
 allows you to switch the theme for different paths and based
 on object properties (e.g. node field values). It can also be
-easily extended to support additional paths or properties, as
+easily extended to support additional paths or properties as
 exposed by other modules.
 
 Documentation for users and developers is very sparse at the
@@ -27,31 +28,24 @@ Thanks for your patience :)
 Installation
 ============
 
-1. Place the entire themekey folder into your Drupal modules/ or better
+1. Place whole themekey folder into your Drupal modules/ or better
    sites/x/modules/ directory.
 
-2. Enable the themekey module by navigating to
-     administer > modules
+2. Enable the ThemeKey module by navigating to
+     Configuration > Modules
 
-3. Bring up the themekey configuration screens by navigating to
-     administer > settings > themekey
+3. Bring up themekey configuration screens by navigating to
+     Configuration > User Interface / ThemeKey
 
 
 ThemeKey UI
 ===========
 
-How to use ThemeKey UI on node forms ...
+1. Enable the ThemeKey UI module by navigating to
+     Configuration > Modules
 
-- Go to admin/settings/themekey/settings/ui to make theme options available
-  on node forms, and check off the content types you want to enable the
-  options for
-
-
-ThemeKey Properties
-===================
-
-"ThemeKey Properties" adds additional properties to the ThemeKey module.
-Download it from http://drupal.org/project/themekey_properties
+2. Bring up ThemeKey configuration screens by navigating to
+     Configuration > User Interface / ThemeKey > Settings > User Interface
 
 
 For Developers
@@ -64,15 +58,25 @@ HOOK_themekey_properties()
             - description => Readable name of property (required)
             - validator   => Callback function to validate a rule starting with that property (optional)
                              TODO: describe validator arguments and return value 
-              static      => true/false, static properties don't occur in properties drop down
+            - file        => File that provides the validator function (optional)
+            - path        => Alternative path relative to dupal's doc root to load the file (optional)
+            - static      => true/false, static properties don't occur in properties drop down
                              and have fixed operator and value (optional)
+            - page cache  => Level of page caching support:
+                             - THEMEKEY_PAGECACHE_SUPPORTED
+                             - THEMEKEY_PAGECACHE_UNSUPPORTED
+                             - THEMEKEY_PAGECACHE_TIMEBASED
+                             Default is THEMEKEY_PAGECACHE_UNSUPPORTED (optional)
 
   Maps
     Key:    none (indexed)
     Value:  array()
             - src       => Source property path (required)
             - dst       => Destination property path (required)
-            - callback  => Mapping callback (required)
+            - callback  => Mapping callback function (required)
+            - file      => File that provides the callback function (optional)
+            - path      => Alternative path relative to dupal's doc root to load the file (optional)
+            - args      => array of additional arguments to be passed to the callback function (optional)
 
 HOOK_themekey_global()
   Global properties
@@ -90,6 +94,3 @@ HOOK_themekey_paths()
               - $item:    array of elements associated with the path/callback
               - $params:  array of parameters available for load callback
 
-HOOK_themekey_load_validators()
-  include files containing validators
-  

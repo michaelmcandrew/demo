@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -341,7 +341,15 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
         //CRM-7172
         require_once 'CRM/Mailing/Info.php';
         if ( CRM_Mailing_Info::workflowEnabled( ) ) {
-            db_query( "UPDATE {permission} SET perm = REPLACE( perm, 'access CiviMail', 'access CiviMail, create mailings, approve mailings, schedule mailings' )" );
+
+            // CRM-7896
+            $roles = user_roles(false, 'access CiviMail');
+            if ( !empty($roles) ) {
+                foreach( array_keys($roles) as $rid ) {
+                    user_role_grant_permissions($rid, array('create mailings', 'approve mailings', 'schedule mailings'));
+                }
+            }
+            
         }
 
         $upgrade =& new CRM_Upgrade_Form( );
@@ -349,4 +357,22 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id )
         $upgrade->processSQL( $rev );
     }
     
+    function upgrade_3_3_7( $rev ) 
+    {        
+        require_once 'CRM/Contact/DAO/Contact.php';
+        $dao = new CRM_Contact_DAO_Contact( );
+        $dbName = $dao->_database;
+
+        $chkExtQuery = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = %1
+                        AND TABLE_NAME = 'civicrm_phone' AND COLUMN_NAME = 'phone_ext'";
+        $extensionExists = CRM_Core_DAO::singleValueQuery( $chkExtQuery,
+                                                          array( 1 => array( $dbName,    'String' ) ),
+                                                          true, false );
+        
+        if ( !$extensionExists ) {
+            $colQuery = 'ALTER TABLE `civicrm_phone` ADD `phone_ext` VARCHAR( 16 ) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL DEFAULT NULL AFTER `phone` ';
+            CRM_Core_DAO::executeQuery( $colQuery );
+        }
+        
+    }
   }

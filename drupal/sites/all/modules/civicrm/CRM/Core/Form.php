@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -797,11 +797,11 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         if ( $editor == 'joomla default editor' ) {
             $editor = 'joomlaeditor';
         }
-        
+
         if ( $editor == 'drupal default editor' ) {
             $editor = 'drupalwysiwyg';
         }
-        
+ 
         $this->addElement( $editor, $name, $label, $attributes );
         $this->assign('editor', $editor);
     }    
@@ -1006,8 +1006,6 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             $attributes['endOffset']   = 10; 
         }
         
-        $attributes['readonly'] = true;
-        
         $this->add('text', $name, $label, $attributes );
 
         if ( CRM_Utils_Array::value( 'addTime', $attributes ) || 
@@ -1030,7 +1028,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                 //in either flat string or an array format. 
                 $elementName = $name.'_time';
                 if ( substr( $name, -1 ) == ']' ) {
-                    $elementName = substr( $name, 0, $name.length - 1).'_time]';
+                    $elementName = substr( $name, 0, strlen($name) - 1).'_time]';
                 }
                 
                 $this->add('text', $elementName, ts('Time'), array( 'timeFormat' => $show24Hours ) );

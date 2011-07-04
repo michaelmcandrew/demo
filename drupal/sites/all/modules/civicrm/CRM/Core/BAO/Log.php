@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -158,7 +158,13 @@ UPDATE civicrm_log
      * @static
      */
      static function useLoggingReport( ) {
-         
+
+         // first check if logging is enabled
+         $config =& CRM_Core_Config::singleton( );
+         if ( ! $config->logging ) {
+             return false;
+         }
+
          require_once 'CRM/Logging/Schema.php';
          $loggingSchema = new CRM_Logging_Schema( );
          

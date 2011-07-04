@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -394,7 +394,7 @@ function _civicrm_api3_contact_check_params( &$params, $dupeCheck = true, $dupeE
                 return civicrm_api3_create_error( $error->pop( ) );
             }
             
-            return civicrm_api3_create_error( "Found matching contacts: $ids", $ids );
+            return civicrm_api3_create_error( "Found matching contacts: $ids" );
         }
     }
 

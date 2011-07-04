@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -67,6 +67,10 @@ packages/jquery/plugins/jquery.dashboard.js
 packages/jquery/css/dashboard.css
 
 packages/jquery/plugins/jquery.FormNavigate.js
+
+packages/jquery/plugins/jquery.validate.js
+packages/jquery/plugins/jquery.civicrm-validate.js
+packages/jquery/plugins/jquery.ui.datepicker.validation.pack.js
 
 js/rest.js
 

@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -52,6 +52,12 @@
             <p class="description">{ts}In order to use this functionality, the installation's database user must have privileges to create triggers (in MySQL 5.0 – and in MySQL 5.1 if binary logging is enabled – this means the SUPER privilege). This install either does not seem to have the required privilege enabled.{/ts}&nbsp;{ts}This functionality cannot be enabled on multilingual installations.{/ts}</p>
            {/if}
           </td>
+        </tr>
+        <tr class="crm-miscellaneous-form-block-doNotAttachPDFReceipt">
+            <td class="label">{$form.doNotAttachPDFReceipt.label}</td>
+            <td>{$form.doNotAttachPDFReceipt.html}<br />
+                <p class="description">{ts}If enabled, CiviCRM sends PDF receipt as an attachment during event signup or online contribution.{/ts}</p>
+            </td>
         </tr>
         <tr class="crm-miscellaneous-form-block-versionCheck">
             <td class="label">{$form.versionCheck.label}</td>

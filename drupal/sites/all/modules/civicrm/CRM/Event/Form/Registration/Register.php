@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -1021,7 +1021,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $this->set( 'params', $this->_params );
 
             if ( !CRM_Utils_Array::value( 'additional_participants', $params ) ) {
-                self::processRegistration(  $this->_params,  $contactID );
+                self::processRegistration(  $this->_params );
             }
         }
         

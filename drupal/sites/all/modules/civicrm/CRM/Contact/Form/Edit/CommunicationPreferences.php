@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -229,10 +229,6 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
                                                                           )
                                );
             
-            if ( $contactType == 'Organization' ) {
-                unset( self::$greetings[$contactType]['email_greeting' ] );
-                unset( self::$greetings[$contactType]['postal_greeting'] );
-            }
         }
         
         return self::$greetings[$contactType];   

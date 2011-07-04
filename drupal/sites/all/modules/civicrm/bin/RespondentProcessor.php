@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -46,10 +46,6 @@ class CRM_RespondentProcessor
         
         //log the execution time of script
         CRM_Core_Error::debug_log_message( 'RespondentProcessor.php' );
-        
-        //load bootstrap to call hooks
-        require_once 'CRM/Utils/System.php';
-        CRM_Utils_System::loadBootStrap( );
     }
     
     public function releaseRespondent( )

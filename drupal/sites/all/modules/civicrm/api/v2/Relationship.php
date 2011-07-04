@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -32,7 +32,7 @@
  * @subpackage API_Relationship
  * 
  * @copyright CiviCRM LLC (c) 2004-2011
- * @version $Id: Relationship.php 34327 2011-05-17 14:37:50Z ashwini $
+ * @version $Id: Relationship.php 34485 2011-05-26 14:01:39Z deepak $
  *
  */
 

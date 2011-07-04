@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -65,7 +65,10 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
         $this->assign( 'validTriggerPermission', $validTriggerPermission );
         $this->addYesNo('logging', ts('Logging'), null, null, $attribs);
 
-        $this->addYesNo( 'versionCheck'           , ts( 'Version Check & Statistics Reporting' ));
+        $this->addYesNo( 'versionCheck', ts( 'Version Check & Statistics Reporting' ));
+        
+        $this->addYesNo( 'doNotAttachPDFReceipt', ts( 'Attach PDF copy to receipts' ) );
+        
         $this->addElement('text', 'maxAttachments' , ts('Maximum Attachments'),
                           array( 'size' => 2, 'maxlength' => 8 ) );
         $this->addElement('text', 'maxFileSize' , ts('Maximum File Size'),

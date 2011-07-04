@@ -15,7 +15,7 @@
 /**
  * Implements hook_themekey_properties().
  *
- * Provides additional properties for module ThemeKey:
+ * Provides additional properties for the Themekey module:
  * - taxonomy:vid
  * - taxonomy:tid
  * - taxonomy:tid_and_childs
@@ -28,7 +28,7 @@ function themekey_taxonomy_themekey_properties() {
   $attributes = array();
   $attributes['taxonomy:vid'] = array(
     'description' => t('Taxonomy: Vocabulary - The vocabulary id (vid) of a taxonomy vocabulary. See !link for your vocabularies.',
-      array('!link' => l(t('!path', array('!path' => 'admin/content/taxonomy')), 'admin/content/taxonomy'))),
+      array('!link' => l(t('!path', array('!path' => 'admin/structure/taxonomy')), 'admin/structure/taxonomy'))),
     'validator' => 'themekey_validator_ctype_digit',
     'page cache' => THEMEKEY_PAGECACHE_SUPPORTED,
   );
@@ -38,28 +38,28 @@ function themekey_taxonomy_themekey_properties() {
     'page cache' => THEMEKEY_PAGECACHE_SUPPORTED,
   );
   $attributes['taxonomy:tid_and_childs'] = array(
-    'description' => t('Taxonomy: Term and its children - The term id (tid) of a taxonomy term. If set, all child terms of this term will be used too.'),
+    'description' => t('Taxonomy: Term and its childs - The term id (tid) of a taxonomy term. If set, all child terms of this term will be used too.'),
     'validator' => 'themekey_validator_ctype_digit',
     'page cache' => THEMEKEY_PAGECACHE_UNSUPPORTED,
   );
 
   // Mapping functions
   $maps = array();
-  $maps[] = array('src'       => 'taxonomy:tid',
-                  'dst'       => 'taxonomy:vid',
-                  'callback'  => 'themekey_taxonomy_tid2vid');
-  $maps[] = array('src'       => 'taxonomy:tid',
-                  'dst'       => 'taxonomy:tid_and_childs',
-                  'callback'  => 'themekey_taxonomy_tid2tid_and_parents');
-  $maps[] = array('src'       => 'node:vid',
-                  'dst'       => 'taxonomy:vid',
-                  'callback'  => 'themekey_taxonomy_vid2vid');
-  $maps[] = array('src'       => 'node:vid',
-                  'dst'       => 'taxonomy:tid',
-                  'callback'  => 'themekey_taxonomy_vid2tid');
-  $maps[] = array('src'       => 'node:vid',
-                  'dst'       => 'taxonomy:tid_and_childs',
-                  'callback'  => 'themekey_taxonomy_vid2tid_and_parents');
+  $maps[] = array(
+    'src' => 'taxonomy:tid',
+    'dst' => 'taxonomy:vid',
+    'callback' => 'themekey_taxonomy_tid2vid',
+  );
+  $maps[] = array(
+    'src' => 'taxonomy:tid',
+    'dst' => 'taxonomy:tid_and_childs',
+    'callback' => 'themekey_taxonomy_tid2tid_and_parents',
+  );
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'taxonomy:tid',
+    'callback' => 'themekey_taxonomy_nid2tid',
+  );
 
   return array('attributes' => $attributes, 'maps' => $maps);
 }
@@ -102,7 +102,11 @@ function themekey_taxonomy_tid2vid($tids) {
   // Using taxonomy API will require to load the node using node_load() which is not allowed in this stage.
   $tids = is_array($tids) ? $tids : array($tids);
   foreach ($tids as $tid) {
-    $vid[] = db_result(db_query('SELECT vid FROM {term_data} WHERE tid = %d', $tid));
+    $vid[] = db_select('taxonomy_term_data', 't')
+    ->fields('t', array('vid'))
+    ->condition('tid', $tid)
+    ->execute()
+    ->fetchField();
   }
 
   return count($vid) ? $vid : NULL;
@@ -114,86 +118,31 @@ function themekey_taxonomy_tid2vid($tids) {
  * ThemeKey property's value (destination)
  * with the aid of another ThemeKey property (source).
  *
- * src: node:vid
- * dst: taxonomy:vid
- *
- * @param $node_vid
- *   node version id
- *
- * @return
- *   array of taxonomy vocabulary ids
- *   or NULL if no value could be mapped
- */
-function themekey_taxonomy_vid2vid($node_vid) {
-  $vid = array();
-  // Use SQL instead taxonomy API because this code runs during hook_init() stage.
-  // Using taxonomy API will require to load the node using node_load() which is not allowed in this stage.
-  $result = db_query('SELECT td.vid FROM {term_data} td INNER JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.vid = %d', $node_vid);
-  while ($term = db_fetch_object($result)) {
-    $vid[] = $term->vid;
-  }
-
-  return count($vid) ? $vid : NULL;
-}
-
-
-/**
- * ThemeKey mapping function to set a
- * ThemeKey property's value (destination)
- * with the aid of another ThemeKey property (source).
- *
- * src: node:vid
+ * src: node:nid
  * dst: taxonomy:tid
  *
- * @param $node_vid
- *   node version id
+ * @param $nid
+ *   node id
  *
  * @return
  *   array of taxonomy term ids
  *   or NULL if no value could be mapped
  */
-function themekey_taxonomy_vid2tid($node_vid) {
-  $tid = array();
-  // Use SQL instead taxonomy API because this code runs during hook_init() stage.
-  // Using taxonomy API will require to load the node using node_load() which is not allowed in this stage.
-  $result = db_query('SELECT tid FROM {term_node} WHERE vid = %d', $node_vid);
-  while ($term = db_fetch_object($result)) {
-    $tid[] = $term->tid;
-  }
+function themekey_taxonomy_nid2tid($nid) {
+  $tids = array();
 
-  return count($tid) ? $tid : NULL;
-}
+  $query = db_select('taxonomy_index', 't');
+  $query->addField('t', 'tid');
+  $query->condition('t.nid', $nid);
+  $result = $query->execute();
 
-
-/**
- * ThemeKey mapping function to set a
- * ThemeKey property's value (destination)
- * with the aid of another ThemeKey property (source).
- *
- * src: node:vid
- * dst: taxonomy:tid_and_parents
- *
- * @param $node_vid
- *   node version id
- *
- * @return
- *   array of taxonomy term ids
- *   or NULL if no value could be mapped
- */
-function themekey_taxonomy_vid2tid_and_parents($node_vid) {
-  $node_tids = themekey_taxonomy_vid2tid($node_vid);
-  if (!is_array($node_tids)) {
-    return FALSE;
-  }
-  $tids = $node_tids;
-  foreach ($node_tids as $tid) {
-    $parent_terms = taxonomy_get_parents_all($tid);
-    foreach ($parent_terms as $parent_term) {
-      $tids[] = $parent_term->tid;
+  if ($result->rowCount()) {
+    foreach ($result as $item) {
+      $tids[] = $item->tid;
     }
   }
 
-  return count($tids) ? array_unique($tids) : NULL;
+  return count($tids) ? $tids : NULL;
 }
 
 
@@ -225,3 +174,4 @@ function themekey_taxonomy_tid2tid_and_parents($tids) {
 
   return count($parents) ? array_unique($parents) : NULL;
 }
+

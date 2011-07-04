@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -413,6 +413,26 @@ class CRM_Utils_Hook {
             eval( 'return ' .
                   $config->userHookClass .
                   '::invoke( 2, $objectName, $object, $null, $null, $null, \'civicrm_copy\' );' );
+    }
+
+    /**
+     * This hook is called when a contact unsubscribes from a mailing.  It allows modules
+     * to override what the contacts are removed from.
+     *
+     * @param int $mailing_id - the id of the mailing to unsub from
+     * @param int $contact_id - the id of the contact who is unsubscribing
+     * @param array / int $groups - array of groups the contact will be removed from
+     **/
+
+    static function unsubscribeGroups($op, $mailingId, $contactId, &$groups, &$baseGroups) {
+        $config = CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        $null =& CRM_Core_DAO::$_nullObject;
+
+        return
+            eval( 'return ' .
+                  $config->userHookClass .
+                  '::invoke(5,$op, $mailingId, $contactId, $groups, $baseGroups, \'civicrm_unsubscribeGroups\');');
     }
 
     static function invoke( $numParams,

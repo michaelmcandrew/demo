@@ -15,7 +15,7 @@
 /**
  * Implements hook_themekey_properties().
  *
- * Provides additional properties for module ThemeKey:
+ * Provides additional properties for the Themekey module:
  * - book:bid
  * - book:has_children
  *
@@ -37,12 +37,16 @@ function themekey_book_themekey_properties() {
   );
 
   $maps = array();
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'book:bid',
-                  'callback'  => 'themekey_book_nid2bid');
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'book:has_children',
-                  'callback'  => 'themekey_book_nid2has_children');
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'book:bid',
+    'callback' => 'themekey_book_nid2bid',
+  );
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'book:has_children',
+    'callback' => 'themekey_book_nid2has_children',
+  );
 
   return array('attributes' => $attributes, 'maps' => $maps);
 }
@@ -105,15 +109,17 @@ function themekey_book_get_simple_book_property($nid, $property) {
   static $books = array();
 
   if (!isset($books[$nid])) {
-    $node = new stdClass();
-    $node->nid = $nid;
+    $nodes = array($nid => new stdClass());
 
     // node_load() must not be called from hook_init().
-    // Therefor we have to execute SQL here using book's hook_nodeapi().
-    $info = book_nodeapi($node, 'load', NULL, NULL);
+    // Therefore we have to execute SQL here using book's hook_node_load().
+    book_node_load($nodes, NULL);
 
-    if (!empty($info['book'])) {
-      $books[$nid] = $info['book'];
+    if (isset($nodes[$nid]->book)) {
+      $books[$nid] = $nodes[$nid]->book;
+    }
+    else {
+      $books[$nid] = array();
     }
   }
 

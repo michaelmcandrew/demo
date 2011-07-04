@@ -15,7 +15,7 @@
 /**
  * Implements hook_themekey_properties().
  *
- * Provides additional properties for module ThemeKey:
+ * Provides additional properties for the ThemeKey module:
  * - node:changed
  * - node:created
  * - node:changed_date_time
@@ -34,7 +34,7 @@
  *   array of themekey properties and mapping functions
  */
 function themekey_node_themekey_properties() {
-  // Attributes for properties
+  // Attributes of properties
   $attributes = array();
   $attributes['node:changed'] = array(
     'description' => t('Node: Changed date - The date when the node was last edited/updated, formatted as unix timestamp like "1248873565".'),
@@ -68,7 +68,7 @@ function themekey_node_themekey_properties() {
   );
   $attributes['node:language'] = array(
     'description' => t('Node: Language - The code of the selected language of a node (formatted like "en" or "de") or "neutral". See !link for the codes of your enabled languages',
-      array('!link' => l(t('!path', array('!path' => 'admin/settings/language')), 'admin/settings/language'))),
+      array('!link' => l(t('!path', array('!path' => 'admin/config/language')), 'admin/config/language'))),
     'validator' => 'themekey_validator_language',
     'page cache' => THEMEKEY_PAGECACHE_SUPPORTED,
   );
@@ -93,8 +93,8 @@ function themekey_node_themekey_properties() {
     'page cache' => THEMEKEY_PAGECACHE_SUPPORTED,
   );
   $attributes['node:type'] = array(
-    'description' => t('Node: Type - The machine readable content type of the node. See !link for your content types (use column "Type"). Drupal default types are "page" and "story".',
-      array('!link' => l(t('!path', array('!path' => 'admin/content/types')), 'admin/content/types'))),
+    'description' => t('Node: Type - The machine-readable content type of the node. See !link for your content types (use column "Type"). Drupal default types are "page" and "story".',
+      array('!link' => l(t('!path', array('!path' => 'admin/structure/types')), 'admin/structure/types'))),
     'validator' => 'themekey_validator_node_type',
     'page cache' => THEMEKEY_PAGECACHE_SUPPORTED,
   );
@@ -112,48 +112,76 @@ function themekey_node_themekey_properties() {
 
   // Mapping functions
   $maps = array();
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'node:changed',
-                  'callback'  => 'themekey_node_nid2changed');
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'node:created',
-                  'callback'  => 'themekey_node_nid2created');
-  $maps[] = array('src'       => 'node:changed',
-                  'dst'       => 'node:changed_date_time',
-                  'callback'  => 'themekey_node_timestamp2datetime');
-  $maps[] = array('src'       => 'node:created',
-                  'dst'       => 'node:created_date_time',
-                  'callback'  => 'themekey_node_timestamp2datetime');
-  $maps[] = array('src'       => 'node:changed',
-                  'dst'       => 'node:changed_date',
-                  'callback'  => 'themekey_node_timestamp2date');
-  $maps[] = array('src'       => 'node:created',
-                  'dst'       => 'node:created_date',
-                  'callback'  => 'themekey_node_timestamp2date');
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'node:language',
-                  'callback'  => 'themekey_node_nid2language');
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'node:vid',
-                  'callback'  => 'themekey_node_nid2vid');
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'node:promote',
-                  'callback'  => 'themekey_node_nid2promote');
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'node:sticky',
-                  'callback'  => 'themekey_node_nid2sticky');
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'node:type',
-                  'callback'  => 'themekey_node_nid2type');
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'node:uid',
-                  'callback'  => 'themekey_node_nid2uid');
-  $maps[] = array('src'       => 'node:nid',
-                  'dst'       => 'node:title',
-                  'callback'  => 'themekey_node_nid2title');
-  $maps[] = array('src'       => 'drupal:get_q',
-                  'dst'       => 'node:type',
-                  'callback'  => 'themekey_node_get_q2type');
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'node:changed',
+    'callback' => 'themekey_node_nid2changed',
+  );
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'node:created',
+    'callback' => 'themekey_node_nid2created',
+  );
+  $maps[] = array(
+    'src' => 'node:changed',
+    'dst' => 'node:changed_date_time',
+    'callback' => 'themekey_node_timestamp2datetime',
+  );
+  $maps[] = array(
+    'src' => 'node:created',
+    'dst' => 'node:created_date_time',
+    'callback' => 'themekey_node_timestamp2datetime',
+  );
+  $maps[] = array(
+    'src' => 'node:changed',
+    'dst' => 'node:changed_date',
+    'callback' => 'themekey_node_timestamp2date',
+  );
+  $maps[] = array(
+    'src' => 'node:created',
+    'dst' => 'node:created_date',
+    'callback' => 'themekey_node_timestamp2date',
+  );
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'node:language',
+    'callback' => 'themekey_node_nid2language',
+  );
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'node:vid',
+    'callback' => 'themekey_node_nid2vid',
+  );
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'node:promote',
+    'callback' => 'themekey_node_nid2promote',
+  );
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'node:sticky',
+    'callback' => 'themekey_node_nid2sticky',
+  );
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'node:type',
+    'callback' => 'themekey_node_nid2type',
+  );
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'node:uid',
+    'callback' => 'themekey_node_nid2uid',
+  );
+  $maps[] = array(
+    'src' => 'node:nid',
+    'dst' => 'node:title',
+    'callback' => 'themekey_node_nid2title',
+  );
+  $maps[] = array(
+    'src' => 'drupal:get_q',
+    'dst' => 'node:type',
+    'callback' => 'themekey_node_get_q2type',
+  );
 
   return array('attributes' => $attributes, 'maps' => $maps);
 }
@@ -178,7 +206,7 @@ function themekey_node_themekey_paths() {
  *   a node id
  *
  * @param $property
- *   name of a nodes attribute as string
+ *   name of a node's attribute as string
  *
  * @return
  *   the value of the property or NULL
@@ -187,16 +215,19 @@ function themekey_node_get_simple_node_property($nid, $property) {
   static $nodes = array();
 
   if (!isset($nodes[$nid])) {
-    // node_load() must not be called from hook_init(). Therefor we have to execute SQL here
-    $nodes[$nid] = db_fetch_array(db_query('SELECT * FROM {node} WHERE nid = %d', $nid));
+    //node_load() must not be called from hook_init(). Therefore, we have to execute SQL here
+    $nodes[$nid] = db_select('node', 'n')
+                   ->fields('n')
+                   ->condition('n.nid', $nid)
+                   ->execute()
+                   ->fetchObject();
   }
 
-  if (isset($nodes[$nid][$property])) {
-    return $nodes[$nid][$property];
+  if (isset($nodes[$nid]->$property)) {
+    return $nodes[$nid]->$property;
   }
-  else {
-    return NULL;
-  }
+  return NULL;
+
 }
 
 
@@ -257,7 +288,7 @@ function themekey_node_nid2created($nid) {
  */
 function themekey_node_nid2language($nid) {
   $language = themekey_node_get_simple_node_property($nid, 'language');
-  if (empty($language)) {
+  if (empty($language) || LANGUAGE_NONE == $language) {
     $language = 'neutral';
   }
   return $language;
@@ -429,11 +460,11 @@ function themekey_node_timestamp2date($timestamp) {
  * ThemeKey property's value (destination)
  * with the aid of another ThemeKey property (source).
  *
- * src: drupal path
+ * src: Drupal path
  * dst: node type
  *
  * @param $patch
- *   a drupal path
+ *   a Drupal path
  *
  * @return
  *   string
@@ -451,7 +482,7 @@ function themekey_node_get_q2type($q) {
  * This function isn't needed anymore and has been removed with ThemeKey 6.x-2.0-beta2.
  * But if it's missing a fatal error occurs if you upgrade from any version before
  * 6.x-2.0-beta2 until you call update.php. That should be avoided.
- * So this function is available again and does nothing other than remind the
+ * So this function is available again and does nothing else than reminding the
  * administrator to call update.php
  *
  * see http://drupal.org/node/662786
@@ -464,6 +495,6 @@ function _themekey_node_callback(&$item, &$parameters) {
   global $user;
 
   if (1 == $user->uid) {
-    drupal_set_message(t('You\'ve uploaded a new version of ThemeKey. Please !link your site!', array('!link' => l(t('update'), '/update.php'))));
+    drupal_set_message(filter_xss(t('You uploaded a new version of ThemeKey. Please !link your site!', array('!link' => l(t('update'), '/update.php')))));
   }
 }

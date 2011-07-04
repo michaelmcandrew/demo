@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -348,7 +348,7 @@ class CRM_Report_Form_Mailing_Opened extends CRM_Report_Form {
 		$mailing->query($query);
 		
 		while($mailing->fetch()) {
-			$data[$mailing->name] = $mailing->name;
+			$data[mysql_real_escape_string($mailing->name)] = $mailing->name;
 		}
 
 		return $data;

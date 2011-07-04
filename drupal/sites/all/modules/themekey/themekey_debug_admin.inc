@@ -22,14 +22,14 @@ function themekey_debug_settings_form() {
     '#title' => t('Debug Settings'),
     '#collapsible' => FALSE,
     '#collapsed' => FALSE,
-    '#description' => t("Debug information will only be visible for the site's administrator."),
+    '#description' => t("Debug information will only be visible to the site's administrator."),
   );
 
   $form['themekey_debug']['themekey_debug_show_property_values'] = array(
     '#type' => 'checkbox',
     '#title' => t('Show values of ThemeKey properties'),
     '#default_value' => variable_get('themekey_debug_show_property_values', FALSE),
-    '#description' => t('Shows current values of ThemeKey properties at the bottom of every page. Additionally, you can start creating a corresponding Theme Switching Rule by clicking on a value.'),
+    '#description' => t('Shows current values of ThemeKey properties at the bottom of every page. Additionally you can start creating a corresponding Theme Switching Rule by clicking on a value.'),
   );
 
   $form['themekey_debug']['themekey_debug_trace_rule_switching'] = array(
@@ -46,10 +46,6 @@ function themekey_debug_settings_form() {
     '#description' => t('All debug output will be shown to all users, including anonymous users. Be careful in production environments and turn off page caching first!'),
   );
 
-  $form['buttons']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Save configuration'),
-  );
 
   return system_settings_form($form);
 }

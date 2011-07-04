@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -104,7 +104,15 @@ class CRM_Contact_Form_Task_SaveSearch extends CRM_Contact_Form_Task {
         $groupTypes = CRM_Core_OptionGroup::values( 'group_type', true );
         unset( $groupTypes['Access Control'] );
         if ( ! CRM_Core_Permission::access( 'CiviMail' ) ) {
-            unset( $groupTypes['Mailing List'] );
+            require_once 'CRM/Mailing/Info.php';
+            $isWorkFlowEnabled = CRM_Mailing_Info::workflowEnabled( );
+            if ( $isWorkFlowEnabled && 
+                 !CRM_Core_Permission::check( 'create mailings' ) &&
+                 !CRM_Core_Permission::check( 'schedule mailings' ) &&
+                 !CRM_Core_Permission::check( 'approve mailings' )
+                 ) {
+                unset( $groupTypes['Mailing List'] );
+            }
         }
 
         if ( ! empty( $groupTypes ) ) {

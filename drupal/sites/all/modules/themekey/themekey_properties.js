@@ -1,5 +1,4 @@
-if (Drupal.jsEnabled) {
-
+(function($) {
   var ThemeKey = ThemeKey || {};
 
   ThemeKey.oldParentId;
@@ -65,7 +64,7 @@ if (Drupal.jsEnabled) {
             enabledElement.removeAttr('checked');
             enabledElement.css('display', 'none');
             rowElement.addClass('themekey-fade-out');
-            // hide and disable childs
+            // hide and disable children
             var id = enabledElement.attr('name').replace('old_items[', '').replace('][enabled]', '');
             ThemeKey.disableChilds(id);
           }
@@ -96,45 +95,47 @@ if (Drupal.jsEnabled) {
     return null;
   };
 
-  Drupal.behaviors.ThemeKey = function(context) {
-    $('.themekey-property-property').change(
-      function() {
-        var wildcardElement = $('#' + $(this).attr('id').replace('property', 'wildcard'));
-        if ('drupal:path:wildcard' == $(this).val()) {
-          wildcardElement.css('display', 'block');
+  Drupal.behaviors.ThemeKey = {
+    attach: function(context) {
+      $('.themekey-property-property').change(
+        function() {
+          var wildcardElement = $('#' + $(this).attr('id').replace('property', 'wildcard'));
+          if ('drupal:path:wildcard' == $(this).val()) {
+            wildcardElement.css('display', 'block');
+          }
+          else {
+            wildcardElement.css('display', 'none');
+          }
+          
+          var propertyName = $(this).val().replace(':', '-').replace(':', '-').replace('_', '-').replace('_', '-');
+          
+          var pageCacheIconElement = $('#' + $(this).attr('id').replace('property', 'page-cache-icon'));
+          pageCacheIconElement.empty();
+          pageCacheIconElement.append($('#themekey-page-cache-' + propertyName).html());
+          
+          var valueHelpElement = $('#' + $(this).attr('id').replace('property', 'value-help'));
+          valueHelpElement.attr('title', $('#themekey-value-help-' + propertyName).html());
         }
-        else {
-          wildcardElement.css('display', 'none');
-        }
-        
-        var propertyName = $(this).val().replace(':', '-').replace(':', '-').replace('_', '-').replace('_', '-');
-        
-        var pageCacheIconElement = $('#' + $(this).attr('id').replace('property', 'page-cache-icon'));
-        pageCacheIconElement.empty();
-        pageCacheIconElement.append($('#themekey-page-cache-' + propertyName).html());
-        
-        var valueHelpElement = $('#' + $(this).attr('id').replace('property', 'value-help'));
-        valueHelpElement.attr('title', $('#themekey-value-help-' + propertyName).html());
-      }
-    );
+      );
 
-    $('.themekey-property-enabled').change(
-      function() {
-        var id = $(this).attr('name').replace('old_items[', '').replace('][enabled]', '');
-        var rowElement = $('#themekey-properties-row-' + id);
-        var parentId = $('.themekey-property-parent', rowElement).val();
-        if ($(this).attr('checked')) {
-          rowElement.removeClass('themekey-fade-out');
-          ThemeKey.adjustChildCounter(parentId, 1);
-          ThemeKey.allowEnablingDirectChilds(id);
+      $('.themekey-property-enabled').change(
+        function() {
+          var id = $(this).attr('name').replace('old_items[', '').replace('][enabled]', '');
+          var rowElement = $('#themekey-properties-row-' + id);
+          var parentId = $('.themekey-property-parent', rowElement).val();
+          if ($(this).attr('checked')) {
+            rowElement.removeClass('themekey-fade-out');
+            ThemeKey.adjustChildCounter(parentId, 1);
+            ThemeKey.allowEnablingDirectChilds(id);
+          }
+          else {
+            rowElement.addClass('themekey-fade-out');
+            ThemeKey.adjustChildCounter(parentId, -1);
+            // hide and disable children
+            ThemeKey.disableChilds(id);
+          }
         }
-        else {
-          rowElement.addClass('themekey-fade-out');
-          ThemeKey.adjustChildCounter(parentId, -1);
-          // hide and disable childs
-          ThemeKey.disableChilds(id);
-        }
-      }
-    );
+      );
+    }
   };
-}
+})(jQuery);

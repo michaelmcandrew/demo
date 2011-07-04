@@ -3,7 +3,7 @@
 /**
  * @file
  * The functions in this file are the back end of ThemeKey which should be
- * used only if you configure something but not when ThemeKey switches themes.
+ * used only if you configure something, but not when ThemeKey switches themes.
  *
  * @author Markus Kalkbrenner | Cocomore AG
  *   @see http://drupal.org/user/124705
@@ -55,7 +55,7 @@ function themekey_theme_options($default = TRUE, $admin = FALSE) {
 
 
 /**
- * Rebuilds all ThemeKey related drupal variables
+ * Rebuilds all ThemeKey-related Drupal variables
  * by calling ThemeKey's hooks:
  * - hook_themekey_properties()
  * - hook_themekey_paths()
@@ -63,6 +63,8 @@ function themekey_theme_options($default = TRUE, $admin = FALSE) {
 function themekey_rebuild() {
   // includes all modules in the themekey/modules subfolder (internal modules)
   themekey_scan_modules();
+
+  module_load_include('inc', 'themekey', 'themekey_base');
 
   // Get property definitions (from internal and other modules)
   $properties = array_merge_recursive(themekey_invoke_modules('themekey_properties'), module_invoke_all('themekey_properties'));
@@ -96,7 +98,7 @@ function themekey_rebuild() {
   // Get (and register) paths from themekey modules
   $paths = array_merge_recursive(themekey_invoke_modules('themekey_paths'), module_invoke_all('themekey_paths'));
 
-  // assign fit factor and wight to this item
+  // assign fit factor and weight to this item
   array_walk($paths, 'themekey_path_set');
 
   $paths_sort = array();
@@ -122,7 +124,7 @@ function themekey_rebuild() {
 /**
  * Scans directory themekey/modules for suitable files
  * which provide ThemeKey properties mapping function and so on
- * and stores the file names for later usage in a drupal variable
+ * and stores the file names, for later use, in a Drupal variable
  * called 'themekey_modules'.
  *
  * @see themekey_rebuild()
@@ -130,7 +132,7 @@ function themekey_rebuild() {
  */
 function themekey_scan_modules() {
   $modules = array();
-  $files = file_scan_directory(dirname(__FILE__) . '/modules', '^themekey.[a-z]+.inc$');
+  $files = file_scan_directory(dirname(__FILE__) . '/modules', '/^themekey.[a-z]+.inc$/');
   foreach ($files as $file) {
     list( , $module) = explode('.', $file->name);
     if (module_exists($module)) {
@@ -157,18 +159,18 @@ function themekey_scan_modules() {
  * @see themekey_load_rules()
  *
  * @param $item
- *   reference to an associative array
+ *   reference to an inject
  *   containing a ThemeKey rule as returned
  *   directly from database
  */
-function themekey_complete_path(&$item) {
-  $item['wildcards'] = unserialize($item['wildcards']);
-  if (count($item['wildcards'])) {
-    $parts = explode('/', $item['value'], MENU_MAX_PARTS);
-    foreach ($item['wildcards'] as $index => $wildcard) {
+function themekey_complete_path($item) {
+  $item->wildcards = unserialize($item->wildcards);
+  if (count($item->wildcards)) {
+    $parts = explode('/', $item->value, MENU_MAX_PARTS);
+    foreach ($item->wildcards as $index => $wildcard) {
       $parts[$index] .= $wildcard;
     }
-    $item['value'] = implode('/', $parts);
+    $item->value = implode('/', $parts);
   }
 }
 
@@ -264,7 +266,7 @@ function themekey_prepare_custom_path($path) {
 
 /**
  * Loads all ThemeKey Rules from the database.
- * Therefore, it uses a recursion to build the rule chains.
+ * Therefore, it uses recursion to build the rule chains.
  *
  * @param $parent
  *   id of the parent rule. Default is '0'.
@@ -273,7 +275,7 @@ function themekey_prepare_custom_path($path) {
  * @param $depth
  *   Integer that represents the 'indentation'
  *   in current rule chain. Default is '0'.
- *   During the recursion, this parameter changes.
+ *   During the recursion this parameter changes.
  *
  * @return
  *   sorted array containing all ThemeKey rules
@@ -283,20 +285,24 @@ function themekey_load_rules($parent = 0, $depth = 0) {
   static $parent_lookups = array();
 
   if (isset($parent_lookups[$parent])) {
-    // prevent endless recursion in case of malformatted data in database
+    // prevent endless recursion in case of malformated data in database
     return $properties;
   }
 
-  $query = 'SELECT * FROM {themekey_properties} WHERE parent = %d ORDER BY weight';
-  $result = db_query($query, $parent);
-  while ($item = db_fetch_array($result)) {
-    if ('drupal:path' == $item['property']) {
+  $result = db_select('themekey_properties', 'tp')
+    ->fields('tp')
+    ->condition('parent', $parent)
+    ->orderBy('weight', 'asc')
+    ->execute();
+
+  foreach ($result as $item) {
+    if ('drupal:path' == $item->property) {
       themekey_complete_path($item);
     }
-    $item['depth'] = $depth;
-    $properties[$item['id']] = $item;
-    themekey_load_rules($item['id'], $depth + 1);
-    $parent_lookups[$item['id']] = TRUE;
+    $item->depth = $depth;
+    $properties[$item->id] = get_object_vars($item);
+    themekey_load_rules($item->id, $depth + 1);
+    $parent_lookups[$item->id] = TRUE;
   }
   return $properties;
 }
@@ -329,20 +335,26 @@ function themekey_rule_set(&$item) {
   }
 
   if (empty($item['id'])) {
-    // prevent table lock issues with drupal_write_record
-    // see http://drupal.org/node/372308#comment-2442664
-    drupal_get_schema(FALSE);
-    db_lock_table('themekey_properties');
+
+    // TRANSACTIONS - SEE http://drupal.org/node/355875
+    // The transaction opens here.
+    $txn = db_transaction();
+
     // new entry should be added at the end of the chain
-    $weight = db_result(db_query("SELECT MAX(weight) FROM {themekey_properties}"));
+    $result = db_select('themekey_properties', 'tp');
+    $result->addExpression('MAX(weight)', 'weight');
+    $weight = $result->execute()->fetchField();
+
     // if query fails $weight will be FALSE which will cause $item['weight'] to be set to '1'
     $item['weight'] = 1 + $weight;
     drupal_write_record('themekey_properties', $item, array());
-    db_unlock_tables();
+
   }
   else {
     drupal_write_record('themekey_properties', $item, 'id');
   }
+
+  // $txn goes out of scope here, and the entire transaction commits.
 }
 
 
@@ -353,26 +365,34 @@ function themekey_rule_set(&$item) {
  *   id of the rule to be deleted from database
  */
 function themekey_rule_del($id) {
-  // lock table to prevent race condition
-  db_lock_table('themekey_properties');
-  $num_childs = db_result(db_query("SELECT COUNT(*) FROM {themekey_properties} WHERE parent = %d", $id));
+
+  // TRANSACTIONS - SEE http://drupal.org/node/355875
+  // The transaction opens here.
+  $txn = db_transaction();
+
+  $result = db_select('themekey_properties', 'tp');
+  $result->condition('parent', $id);
+  $result->addExpression('COUNT(*)', 'num_childs');
+  $num_childs = $result->execute()->fetchField();
+
   if (FALSE !== $num_childs) {
     if ($num_childs > 0) {
-      db_unlock_tables();
-      drupal_set_message(t('ThemeKey rule could not be deleted, because it has children in the chain'), 'error');
+      drupal_set_message(t('ThemeKey rule could not be deleted because it has children in the chain'), 'error');
     }
     else {
-      $result = db_query('DELETE FROM {themekey_properties} WHERE id = %d', $id);
-      db_unlock_tables();
+      $result = db_delete('themekey_properties')
+      ->condition('id', $id)
+      ->execute();
       if (!$result) {
         drupal_set_message(t('Error while deleting ThemeKey rule'), 'error');
       }
     }
   }
   else {
-    db_unlock_tables();
     drupal_set_message(t('Error while deleting ThemeKey rule'), 'error');
   }
+
+  // $txn goes out of scope here, and the entire transaction commits.
 }
 
 
@@ -386,13 +406,20 @@ function themekey_rule_del($id) {
  *   the rule as associative array or NULL
  */
 function themekey_rule_get($id) {
-  if ($result = db_query('SELECT * FROM {themekey_properties} WHERE id = %d', $id)) {
-    if ($item = db_fetch_array($result)) {
-      if ('drupal:path' == $item['property']) {
+
+  if ($result = db_select('themekey_properties', 'tp')
+    ->fields('tp')
+    ->condition('id', $id)
+    ->execute()
+  ) {
+
+    foreach ($result as $item) {
+      if ('drupal:path' == $item->property) {
         themekey_complete_path($item);
       }
       return $item;
     }
+
   }
 
   return NULL;
@@ -414,7 +441,14 @@ function themekey_rule_get($id) {
  *   - FALSE the rule should be deleted
  */
 function themekey_update_static_rule($property, $state) {
-  $id = db_result(db_query("SELECT id FROM {themekey_properties} WHERE property = '%s'", $property));
+
+  $id = db_select('themekey_properties', 'tp')
+    ->fields('tp', array('id'))
+    ->condition('property', $property)
+    ->execute()
+    ->fetchField();
+
+
   if ($state) {
     $item = array(
       'property' => $property,
@@ -438,4 +472,3 @@ function themekey_update_static_rule($property, $state) {
     themekey_rule_del($id);
   }
 }
-

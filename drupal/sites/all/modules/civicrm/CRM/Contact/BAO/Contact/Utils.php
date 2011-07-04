@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.4                                                |
+ | CiviCRM version 4.0                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2011                                |
  +--------------------------------------------------------------------+
@@ -87,11 +87,16 @@ class CRM_Contact_BAO_Contact_Utils
         }
         
         if ( $addProfileOverlay ) {
-            $summaryOverlayProfileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'summary_overlay', 'id', 'name' );
+            static $summaryOverlayProfileId = null;
+            if ( ! $summaryOverlayProfileId ) {
+                $summaryOverlayProfileId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', 'summary_overlay', 'id', 'name' );
+            }
         
-            $profileURL = CRM_Utils_System::url('civicrm/profile/view', "reset=1&gid={$summaryOverlayProfileId}&id={$contactId}&snippet=4");
+            $profileURL = CRM_Utils_System::url('civicrm/profile/view',
+                                                "reset=1&gid={$summaryOverlayProfileId}&id={$contactId}&snippet=4");
         
-            $imageInfo[$contactType]['summary-link'] = '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]['image'].'</a>';
+            $imageInfo[$contactType]['summary-link'] = 
+                '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]['image'].'</a>';
         } else {
             $imageInfo[$contactType]['summary-link'] = $imageInfo[$contactType]['image'];
         }
@@ -460,6 +465,9 @@ WHERE id={$contactId}; ";
         $form->assign( 'contactEditMode' , $contactEditMode );
 
         $attributes = CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact');
+        if ( $form->_contactId ) {
+            $form->assign( 'orgId', $form->_contactId );
+        }
 
         switch ( $contactType ) {
         case 'Organization':
@@ -471,11 +479,10 @@ WHERE id={$contactId}; ";
                 $employers = CRM_Contact_BAO_Relationship::getPermissionedEmployer( $contactID );
             }
 
+            $locDataURL = CRM_Utils_System::url( 'civicrm/ajax/permlocation', 'cid=', false, null, false );
+            $form->assign( 'locDataURL', $locDataURL );
+
             if ( !$contactEditMode && $contactID && ( count($employers) >= 1 ) ) {
-                
-                $locDataURL = CRM_Utils_System::url( 'civicrm/ajax/permlocation', 'cid=', 
-                                                     false, null, false );
-                $form->assign( 'locDataURL', $locDataURL );
                 
                 $dataURL = CRM_Utils_System::url( 'civicrm/ajax/employer', 
                                                   'cid=' . $contactID, 
