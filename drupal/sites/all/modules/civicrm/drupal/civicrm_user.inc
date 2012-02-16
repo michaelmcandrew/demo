@@ -83,7 +83,7 @@ function civicrm_user_insert( &$edit, &$user, $category = NULL )
 }
 
 /**
- * Implementation of hook_user_insert
+ * Implementation of hook_user_update
  */
 function civicrm_user_update( &$edit, &$user, $category ) 
 {
@@ -106,20 +106,20 @@ function civicrm_user_update( &$edit, &$user, $category )
 }
 
 /**
- * Implementation of hook_user_insert
+ * Implementation of hook_user_delete
  */
-function civicrm_user_delete( &$edit, &$user, $category ) 
+function civicrm_user_delete( $account ) 
 {
     if ( ! civicrm_initialize( ) ) {
         return;
     }
     require_once 'CRM/Core/BAO/UFMatch.php';
-    CRM_Core_BAO_UFMatch::deleteUser( $user->uid );
+    CRM_Core_BAO_UFMatch::deleteUser( $account->uid );
 }
 
 
 /**
- * Implementation of hook_user_insert
+ * Implementation of hook_user_categories
  */
 function civicrm_user_categories() 
 {
@@ -170,7 +170,7 @@ function civicrm_user_view( $user, $view_mode ){
         if ( CRM_Core_Permission::check( 'access CiviCRM' ) &&
              CRM_Contact_BAO_Contact_Permission::allow( $userID ) ) {
             $url = CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid=$userID" );
-            $contactURL = '<a href="' .$url. '">&raquo; ' .t("View Contact Record") . '</a>';
+            $contactURL = '<a href="' .$url. '">&raquo; ' .ts("View Contact Record") . '</a>';
         }
 
         if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {
@@ -178,7 +178,7 @@ function civicrm_user_view( $user, $view_mode ){
             if ( ! empty( $contactURL ) ) {
                 $contactURL .= '<br/>';
             }
-            $contactURL .= '<a href="' .$url. '">&raquo; ' .t("View Contact Dashboard") . '</a>';
+            $contactURL .= '<a href="' .$url. '">&raquo; ' .ts("View Contact Dashboard") . '</a>';
         }
 
         require_once 'CRM/Profile/Page/Dynamic.php';
@@ -203,7 +203,7 @@ function civicrm_user_view( $user, $view_mode ){
 
             // CRM-3537: profile edit link
             if ( user_edit_access($user) ) {
-                $editURL = '&raquo; ' . l( t("Edit '!1'", array('!1' => $title['title'])),
+                $editURL = '&raquo; ' . l( ts("Edit %1", array('%1' => $title['title'])),
                                            "user/{$user->uid}/edit/{$title['title']}");
             }
 

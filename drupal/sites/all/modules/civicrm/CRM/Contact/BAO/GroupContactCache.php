@@ -38,9 +38,6 @@ require_once 'CRM/Contact/DAO/GroupContactCache.php';
 
 class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCache {
 
-    const
-        NUM_CONTACTS_TO_INSERT = 200;
-
     /**
      * Check to see if we have cache entries for this group
      * if not, regenerate, else return
@@ -118,10 +115,10 @@ AND     ( g.cache_date IS NULL OR
     static function store( &$groupID, &$values ) {
         $processed = false;
 
-        // to avoid long strings, lets do NUM_CONTACTS_TO_INSERT values at a time
+        // to avoid long strings, lets do BULK_INSERT_COUNT values at a time
         while ( ! empty( $values ) ) {
             $processed = true;
-            $input = array_splice( $values, 0, self::NUM_CONTACTS_TO_INSERT );
+            $input = array_splice( $values, 0, CRM_Core_DAO::BULK_INSERT_COUNT );
             $str   = implode( ',', $input );
             $sql = "REPLACE INTO civicrm_group_contact_cache (group_id,contact_id) VALUES $str;";
             CRM_Core_DAO::executeQuery( $sql );
@@ -323,14 +320,32 @@ WHERE  civicrm_group_contact.status = 'Added'
         self::store ( $groupIDs, $values );
 
         if ( $group->children ) {
+
+            //Store a list of contacts who are removed from the parent group
+            $sql = "
+SELECT contact_id
+FROM civicrm_group_contact
+WHERE  civicrm_group_contact.status = 'Removed'
+AND  civicrm_group_contact.group_id = $groupID ";
+            $dao = CRM_Core_DAO::executeQuery( $sql );
+            $removed_contacts = array();
+            while ( $dao->fetch( ) ) {
+                $removed_contacts[] = $dao->contact_id;
+            }
+
             require_once 'CRM/Contact/BAO/Group.php';
             $childrenIDs = explode( ',', $group->children );
             foreach ( $childrenIDs as $childID ) {
                 $contactIDs =& CRM_Contact_BAO_Group::getMember( $childID, false );
+                //Unset each contact that is removed from the parent group
+                foreach($removed_contacts as $removed_contact) {
+                    unset($contactIDs[$removed_contact]);
+                }
                 $values = array( );
                 foreach ( $contactIDs as $contactID => $dontCare) {
                     $values[] = "({$groupID},{$contactID})";
                 }
+
                 self::store ( $groupIDs, $values );
             }
         }

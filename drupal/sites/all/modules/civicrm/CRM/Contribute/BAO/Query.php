@@ -90,7 +90,7 @@ class CRM_Contribute_BAO_Query
         }
         
         if ( CRM_Utils_Array::value( 'contribution_note', $query->_returnProperties ) ) {
-            $query->_select['contribution_note']  = "civicrm_note_contribution.note as contribution_note";
+            $query->_select['contribution_note']  = "civicrm_note.note as contribution_note";
             $query->_element['contribution_note'] = 1;
             $query->_tables['contribution_note']  = 1;
         }
@@ -269,6 +269,7 @@ class CRM_Contribute_BAO_Query
             $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
             return;
 
+        case 'contribution_status':
         case 'contribution_status_id':
             if ( is_array( $value ) ) {
                 foreach ($value as $k => $v) {
@@ -292,7 +293,8 @@ class CRM_Contribute_BAO_Query
             $statusValues = CRM_Core_OptionGroup::values("contribution_status");
             
             $names = array( );
-            if ( is_array( $val ) ) {
+            if ( isset( $val ) &&
+                 is_array( $val ) ) {
                 foreach ( $val as $id => $dontCare ) {
                     $names[] = $statusValues[ $id ];
                 }
@@ -506,8 +508,8 @@ class CRM_Contribute_BAO_Query
             break;
             
         case 'contribution_note':
-            $from .= " $side JOIN civicrm_note civicrm_note_contribution ON ( civicrm_note_contribution.entity_table = 'civicrm_contribution' AND
-                                                        civicrm_contribution.id = civicrm_note_contribution.entity_id )";
+            $from .= " $side JOIN civicrm_note ON ( civicrm_note.entity_table = 'civicrm_contribution' AND
+                                                    civicrm_contribution.id = civicrm_note.entity_id )";
             break;
 
         case 'contribution_membership':

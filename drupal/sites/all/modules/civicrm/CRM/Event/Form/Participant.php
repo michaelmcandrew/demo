@@ -267,7 +267,9 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             // also check for billing information
             // get the billing location type
             $locationTypes =& CRM_Core_PseudoConstant::locationType( );
-            $this->_bltID = array_search( ts('Billing'),  $locationTypes );
+            // CRM-8108 remove ts around Billing location type
+            //$this->_bltID = array_search( ts('Billing'),  $locationTypes );
+            $this->_bltID = array_search( 'Billing',  $locationTypes );
             if ( ! $this->_bltID ) {
                 CRM_Core_Error::fatal( ts( 'Please set a location type of %1', array( 1 => 'Billing' ) ) );
             }
@@ -347,9 +349,11 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         
         $this->assign( 'single', $this->_single );
         
-        $this->_action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false, 'add' );
-        $this->assign( 'action'  , $this->_action   ); 
-
+        if ( !$this->_id ) {
+            $this->_action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false, 'add' );
+        }
+        $this->assign( 'action'  , $this->_action   );
+                
         // check for edit permission
         if ( ! CRM_Core_Permission::checkActionPermission( 'CiviEvent', $this->_action ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
@@ -841,20 +845,26 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
         
         $noteAttributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Note' );
         $this->add('textarea', 'note', ts('Notes'), $noteAttributes['note']);
+                
+        $buttons[] = array ( 'type'      => 'upload',
+                             'name'      => ts('Save'), 
+                             'isDefault' => true,
+                             'js'        => $confirmJS 
+                             );
+
+        $path = CRM_Utils_System::currentPath( );
+        if ( strpos( $path, 'civicrm/contact/search' ) !== 0 ) { 
+            $buttons[] = array ( 'type'      => 'upload',
+                                 'name'      => ts('Save and New'), 
+                                 'subName'   => 'new',
+                                 'js'        => $confirmJS 
+                                 );
+        }
+        $buttons[] = array ( 'type'      => 'cancel', 
+                             'name'      => ts('Cancel')
+                             );
         
-        $this->addButtons(array( 
-                                array ( 'type'      => 'upload',
-                                        'name'      => ts('Save'), 
-                                        'isDefault' => true,
-                                        'js'        => $confirmJS ),
-                                array ( 'type'      => 'upload',
-                                        'name'      => ts('Save and New'), 
-                                        'subName'   => 'new',
-                                        'js'        => $confirmJS ),         
-                                array ( 'type'      => 'cancel', 
-                                        'name'      => ts('Cancel') ), 
-                                ) 
-                          );
+        $this->addButtons( $buttons );
         if ($this->_action == CRM_Core_Action::VIEW) { 
             $this->freeze();
         } 
@@ -1414,14 +1424,15 @@ loadCampaign( {$this->_eID}, {$eventCampaigns} );
             unset($event['end_date']);
            
             $role = CRM_Event_PseudoConstant::participantRole();
-            if ( is_array( $params['role_id'] ) ) {
+            $participantRoles = CRM_Utils_Array::value( 'role_id', $params );
+            if ( is_array( $participantRoles ) ) {
                 $selectedRoles = array( );
-                foreach ( array_keys( $params['role_id'] ) as $roleId ) {
+                foreach ( array_keys( $participantRoles ) as $roleId ) {
                     $selectedRoles[ ] = $role[$roleId];
                 }
                 $event['participant_role'] = implode( ', ', $selectedRoles );
             } else {
-                $event['participant_role'] = $role[$params['role_id']];
+                $event['participant_role'] = CRM_Utils_Array::value( $participantRoles, $role );
             }
             $event['is_monetary'] = $this->_isPaidEvent;
            

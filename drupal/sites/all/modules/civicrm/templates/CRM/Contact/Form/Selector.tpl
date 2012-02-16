@@ -95,7 +95,7 @@
             <td>{$row.contact_type}</td>	
             <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&key=`$qfKey`"}">{if $row.is_deleted}<del>{/if}{$row.sort_name}{if $row.is_deleted}</del>{/if}</a></td>
             {if $action eq 512 or $action eq 256}
-              <td><span title="{$row.street_address}">{$row.street_address|mb_truncate:22:"...":true}</span</td>
+              <td><span title="{$row.street_address}">{$row.street_address|mb_truncate:22:"...":true}</span></td>
               <td>{$row.city}</td>
               <td>{$row.state_province}</td>
               <td>{$row.postal_code}</td>
@@ -166,7 +166,7 @@ cj(".selector tr").contextMenu({
         }
         eval( 'locationUrl = locationUrl.replace( /changeid/, contactId );');
         var destination = "{/literal}{crmURL q='force=1' h=0}{literal}";
-        window.location = locationUrl + '&destination=' + encodeURIComponent(destination);
+        window.location = locationUrl + '&civicrmDestination=' + encodeURIComponent(destination);
    });
 
     cj('.selector').crmrowhighlighter( );

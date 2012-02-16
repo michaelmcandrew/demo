@@ -140,7 +140,7 @@ function selectValue( val ) {
             oEditor = CKEDITOR.instances[html_message];
             oEditor.setData( html_body );
         } else if ( editor == "tinymce" ) {
-            cj('#'+ html_message).tinymce().execCommand('mceSetContent',false, html_body);
+            tinyMCE.execInstanceCommand('html_message',"mceInsertContent",false, html_body );
         } else if ( editor == "joomlaeditor" ) { 
             cj("#"+ html_message).val( html_body );
             tinyMCE.execCommand('mceSetContent',false, html_body);           
@@ -252,14 +252,9 @@ function selectValue( val ) {
         }else {
            ( isMailing ) ? text_message = "text_message" : text_message = "msg_text";
         }          
-        var msg       = cj("#"+ text_message).val( );
-        var cursorlen = document.getElementById(text_message).selectionStart;
-        var textlen   = msg.length;
-        document.getElementById(text_message).value = msg.substring(0, cursorlen) + token + msg.substring(cursorlen, textlen);
-        var cursorPos = (cursorlen + token.length);
-        document.getElementById(text_message).selectionStart = cursorPos;
-        document.getElementById(text_message).selectionEnd   = cursorPos;
-        document.getElementById(text_message).focus();
+        
+        cj( "#"+ text_message ).replaceSelection( token ); 
+
         if ( isMailing ) { 
              verify();
         }
@@ -270,7 +265,7 @@ function selectValue( val ) {
         var token2     = cj("#token2").val( )[0];
         var editor     = {/literal}"{$editor}"{literal};
         if ( editor == "tinymce" ) {
-            cj('#'+ html_message).tinymce().execCommand('mceInsertContent',false, token2);
+            tinyMCE.execInstanceCommand('html_message',"mceInsertContent",false, token2 );
         } else if ( editor == "joomlaeditor" ) { 
             tinyMCE.execCommand('mceInsertContent',false, token2);
             var msg       = document.getElementById(html_message).value;
@@ -285,14 +280,7 @@ function selectValue( val ) {
             oEditor = CKEDITOR.instances[html_message];
             oEditor.insertHtml(token2.toString() );
         } else {
-            var msg       = document.getElementById(html_message).value;
-            var cursorlen = document.getElementById(html_message).selectionStart;
-            var textlen   = msg.length;
-            document.getElementById(html_message).value = msg.substring(0, cursorlen) + token2 + msg.substring(cursorlen, textlen);
-            var cursorPos = (cursorlen + token2.length);
-            document.getElementById(html_message).selectionStart = cursorPos;
-            document.getElementById(html_message).selectionEnd   = cursorPos;
-            document.getElementById(html_message).focus();
+            cj( "#"+ html_message ).replaceSelection( token2 );
         }
 
         if ( isMailing ) { 
@@ -393,14 +381,14 @@ function selectValue( val ) {
                 
                 if ( data.signature_html ) {
                     var htmlMessage =  cj("#"+ html_message).val( ) + '<br/><br/>--<br/>' + data.signature_html;
-
+                    
                     // set wysiwg editor
                     if ( editor == "ckeditor" ) {
                         oEditor = CKEDITOR.instances[html_message];
                         var htmlMessage = oEditor.getData( ) + '<br/><br/>--' + data.signature_html;
                         oEditor.setData( htmlMessage  );
                     } else if ( editor == "tinymce" ) {
-                        cj('#'+ html_message).tinymce().execCommand('mceSetContent',false, htmlMessage );
+                        tinyMCE.execInstanceCommand('html_message',"mceInsertContent",false, htmlMessage );
                     }  else if ( editor == "drupalwysiwyg" ) {
                         Drupal.wysiwyg.instances[html_message].insert(htmlMessage);
                     } else {	

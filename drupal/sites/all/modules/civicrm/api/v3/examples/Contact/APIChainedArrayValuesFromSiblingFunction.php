@@ -58,7 +58,6 @@ function contact_create_expectedresult(){
           'preferred_communication_method' => '',
           'preferred_language' => 'en_US',
           'preferred_mail_format' => '',
-          'hash' => '9e0c76a968a8c449b02c3a77a85452e7',
           'api_key' => '',
           'first_name' => '',
           'middle_name' => '',
@@ -103,11 +102,14 @@ function contact_create_expectedresult(){
 
 /*
 * This example has been generated from the API test suite. The test that created it is called
-* contact_create 
+* 
+* testChainingValuesCreate and can be found in 
+* http://svn.civicrm.org/civicrm/branches/v3.4/tests/phpunit/CiviTest/api/v3/ContactTest.php
+* 
 * You can see the outcome of the API tests at 
 * http://tests.dev.civicrm.org/trunk/results-api_v3
 * and review the wiki at
-* http://wiki.civicrm.org/confluence/display/CRMDOC40/CiviCRM+Public+APIs
+* http://wiki.civicrm.org/confluence/display/CRMDOC/CiviCRM+Public+APIs
 * Read more about testing here
 * http://wiki.civicrm.org/confluence/display/CRM/Testing
 */

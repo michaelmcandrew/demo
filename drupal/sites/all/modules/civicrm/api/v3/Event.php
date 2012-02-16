@@ -57,16 +57,15 @@ require_once 'api/v3/utils.php';
 */
 function civicrm_api3_event_create( $params )
 {
-    try {
+
     civicrm_api3_verify_mandatory ($params,'CRM_Event_DAO_Event',array ('start_date','event_type_id','title'));
-    $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'] );
-    $params['end_date'] = CRM_Utils_Date::processDate( $params['end_date'] );
    
     //format custom fields so they can be added
     $value = array();
     _civicrm_api3_custom_format_params( $params, $values, 'Event' );
     $params = array_merge($values,$params);
     require_once 'CRM/Event/BAO/Event.php';
+
     $eventBAO = CRM_Event_BAO_Event::create($params);
 
     if ( is_a( $eventBAO, 'CRM_Core_Error' ) ) {
@@ -77,11 +76,7 @@ function civicrm_api3_event_create( $params )
     }
 
     return civicrm_api3_create_success($event,$params);
-      } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 
@@ -97,8 +92,7 @@ function civicrm_api3_event_create( $params )
 
 function civicrm_api3_event_get( $params )
 {
-  _civicrm_api3_initialize( true );
-  try {
+
     civicrm_api3_verify_mandatory($params);
 
     $inputParams            = array( );
@@ -111,14 +105,14 @@ function civicrm_api3_event_get( $params )
     $offset   = array_key_exists( 'return.offset', $params ) ? $params['return.offset'] : 0;
     $rowCount = array_key_exists( 'return.max_results', $params ) ? $params['return.max_results'] : 25;
     $isCurrent = array_key_exists( 'isCurrent', $params ) ? $params['isCurrent'] : 0;
-    
+    $isFull  = array_key_exists( 'return.is_full', $params ) ? $params['return.is_full'] : 0;    
 
     foreach ( $params as $n => $v ) {
       if ( substr( $n, 0, 6 ) == 'return' ) {
         if ( substr( $n, 0, 14 ) == 'return.custom_') {
           //take custom return properties separate
           $returnCustomProperties[] = substr( $n, 7 );
-        } elseif( !in_array( substr( $n, 7 ) ,array( 'sort', 'offset', 'max_results', 'isCurrent' ) ) ) {
+        } elseif( !in_array( substr( $n, 7 ) ,array( 'sort', 'offset', 'max_results', 'isCurrent' , 'is_full') ) ) {
           $returnProperties[] = substr( $n, 7 );
         }
       } elseif ( in_array( $n, $otherVars ) ) {
@@ -137,11 +131,13 @@ function civicrm_api3_event_get( $params )
     require_once 'CRM/Event/BAO/Event.php';
     $eventDAO = new CRM_Event_BAO_Event( );
     $eventDAO->copyValues( $inputParams );
+
     $event = array();
     if ( !empty( $returnProperties ) ) {
       $eventDAO->selectAdd( );
       $eventDAO->selectAdd( implode( ',' , $returnProperties ) );
     }
+
     $eventDAO->whereAdd( '( is_template IS NULL ) OR ( is_template = 0 )' );
     
     if ( $isCurrent ) {
@@ -153,17 +149,16 @@ function civicrm_api3_event_get( $params )
     while ( $eventDAO->fetch( ) ) {
       $event[$eventDAO->id] = array( );
       CRM_Core_DAO::storeValues( $eventDAO, $event[$eventDAO->id] );
+      if($isFull){
+         _civicrm_api3_event_getisfull($event,$eventDAO->id);
+      }
       _civicrm_api3_custom_data_get($event[$eventDAO->id],'Event',$eventDAO->id,null,$eventDAO->event_type_id);
 
     }//end of the loop
 
-    return civicrm_api3_create_success($event,$params,$eventDAO);
+    return civicrm_api3_create_success($event,$params,'event','get',$eventDAO);
 
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
+
 }
 
 /**
@@ -175,24 +170,42 @@ function civicrm_api3_event_get( $params )
  *
  * @return boolean        true if success, error otherwise
  * @access public
+ * 
+ * note API has legacy support for 'event_id'
  */
 function civicrm_api3_event_delete( $params )
 {
 
-  try {
     civicrm_api3_verify_one_mandatory($params,null,array('event_id','id'));
-
-
-    $eventID = CRM_Utils_Array::value( 'event_id', $params )?CRM_Utils_Array::value( 'event_id', $params ):CRM_Utils_Array::value( 'id', $params );
-
+    $eventID = 
+        CRM_Utils_Array::value( 'event_id', $params ) ?
+        CRM_Utils_Array::value( 'event_id', $params ) :
+        CRM_Utils_Array::value( 'id', $params );
 
     require_once 'CRM/Event/BAO/Event.php';
+    return 
+        CRM_Event_BAO_Event::del( $eventID ) ?
+        civicrm_api3_create_success( ) :
+        civicrm_api3_create_error( ts( 'Error while deleting event' ) );
 
-    return CRM_Event_BAO_Event::del( $eventID ) ?  civicrm_api3_create_success( ) : civicrm_api3_create_error(  'Error while deleting event' );
-  } catch (PEAR_Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  } catch (Exception $e) {
-    return civicrm_api3_create_error( $e->getMessage() );
-  }
 }
 
+/*
+ * Function to add 'is_full' & 'available_seats' to the return array. (this might be better in the BAO)
+ * Default BAO function returns a string if full rather than a Bool - which is more appropriate to a form
+ * 
+ * @param array $event return array of the event
+ * @param int $event_id Id of the event to be updated
+ * 
+ */
+function _civicrm_api3_event_getisfull(&$event,$event_id){
+        require_once 'CRM/Event/BAO/Participant.php';
+        $eventFullResult = CRM_Event_BAO_Participant::eventFull($event_id,1);
+        if(!empty($eventFullResult) && is_int($eventFullResult)){
+          $event[$event_id]['available_places'] = $eventFullResult;
+        }else{
+          $event[$event_id]['available_places'] = 0; 
+        }       
+        $event[$event_id]['is_full'] = $event[$event_id]['available_places'] == 0  ? 1:0;
+  
+}
